@@ -1,24 +1,24 @@
 <template>
-  <div class="container mx-auto">
-    <img class="mx-auto" alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Hello Vue 3 + Vite + WindiCSS" />
-  </div>
+  <NConfigProvider :theme-overrides="ThemeOverrides">
+    <NButton type="primary">
+      Primary
+    </NButton>
+    <RouterView />
+  </NConfigProvider>
 </template>
-
 <script setup>
-import HelloWorld from "./components/HelloWorld.vue";
 
-// This starter template is using Vue 3 experimental <script setup> SFCs
-// Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
+const ThemeOverrides = {
+  common: {
+    primaryColor: '#8b5cf6',
+    primaryColorHover: "#6d28d9",
+    borderRadius: "5px",
+    fontWeight: 600
+  }
+}
+
+
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>
