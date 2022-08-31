@@ -3,6 +3,7 @@
     :options="menus"
     :mode="mode"
     :collapsed="collapsed"
+    inverted="true"
     :collapsed-width="64"
     :collapsed-icon-size="20"
     :indent="24"
@@ -103,6 +104,11 @@
                 key: 'rule',
                 icon: renderIcon(BookIcon),
               },
+              {
+                label: '告警记录',
+                key: 'record',
+                icon: renderIcon(BookIcon),
+              },
             ],
           },
         ];
@@ -122,6 +128,7 @@
           router.push({ name: key });
         }
         emit('clickMenuItem', key);
+        selectedKeys.value = key;
       }
 
       function menuExpanded(openKeys) {
