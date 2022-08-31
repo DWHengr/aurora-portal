@@ -1,8 +1,8 @@
-import 'virtual:windi.css'
-import { createApp } from 'vue'
-import { setupNaive } from './utils/naive'
-import router from "./router"
-import App from './App.vue'
+import 'virtual:windi.css';
+import { createApp } from 'vue';
+import { setupNaive } from './utils/naive';
+import router from './router';
+import App from './App.vue';
 
 async function bootstrap() {
   const app = createApp(App);

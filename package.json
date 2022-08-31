@@ -4,18 +4,45 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "lint:eslint": "eslint \"{src,mock}/**/*.{vue,js,jsx,ts,tsx}\" --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{json,css,scss}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "dependencies": {
-    "vite-plugin-windicss": "^1.0.4",
+    "@vicons/ionicons5": "^0.10.0",
     "vue": "^3.0.5",
-    "vue-router": "^4.0.15",
-    "@vicons/ionicons5": "^0.10.0"
+    "vue-router": "^4.0.15"
   },
   "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/eslint-parser": "^7.18.2",
     "@vitejs/plugin-vue": "^1.2.3",
     "@vue/compiler-sfc": "^3.1.1",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-define-config": "1.0.9",
+    "eslint-plugin-html": "^7.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-vue": "^9.4.0",
     "naive-ui": "^2.33.1",
-    "vite": "^2.3.8"
+    "prettier": "^2.7.1",
+    "vite": "^2.3.8",
+    "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-windicss": "^1.0.4",
+    "vue-eslint-parser": "^7.11.0"
   }
 }

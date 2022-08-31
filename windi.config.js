@@ -1,18 +1,18 @@
-import formsPlugin from 'windicss/plugin/forms'
+import formsPlugin from 'windicss/plugin/forms';
 module.exports = {
   extract: {
-    include: ['./**/*.html','./**/*.vue','./**/*.css'],
+    include: ['./**/*.html', './**/*.vue', './**/*.css'],
   },
-  darkMode:'class',
+  darkMode: 'class',
   theme: {
     extend: {
       container: {
-        center: true
-      }
-    }
+        center: true,
+      },
+    },
   },
   variants: {
-    extend: {}
+    extend: {},
   },
-  plugins: [formsPlugin]
-}
+  plugins: [formsPlugin],
+};
