@@ -1,6 +1,5 @@
 <template>
   <NConfigProvider :theme-overrides="ThemeOverrides">
-    <NButton type="primary"> Primary </NButton>
     <RouterView />
   </NConfigProvider>
 </template>
