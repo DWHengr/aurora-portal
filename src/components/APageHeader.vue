@@ -40,10 +40,11 @@
   import { defineComponent, computed } from 'vue';
 
   export default defineComponent({
-    name: 'PageHeader',
+    name: 'APageHeader',
     props: {
       collapsed: {
         type: Boolean,
+        default: false,
       },
     },
     emits: ['update:collapsed'],

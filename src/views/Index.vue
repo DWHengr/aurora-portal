@@ -2,7 +2,7 @@
   <n-layout class="layout" has-sider>
     <n-layout-sider
       collapse-mode="width"
-      inverted="true"
+      :inverted="true"
       :collapsed="collapsed"
       :collapsed-width="64"
       @collapse="collapsed = true"
@@ -14,10 +14,10 @@
       <AMenu v-model:collapsed="collapsed" />
     </n-layout-sider>
     <n-layout>
-      <n-layout-header>
-        <APageHeader v-model:collapsed="collapsed" />
-      </n-layout-header>
       <n-layout-content class="layout-content layout-default-background">
+        <n-layout-header>
+          <APageHeader v-model:collapsed="collapsed" />
+        </n-layout-header>
         <div class="layout-content-main">
           <div class="main-view">
             <RouterView />
@@ -89,7 +89,7 @@
   .layout-content-main {
     margin: 0 10px 10px;
     position: relative;
-    padding-top: 64px;
+    padding-top: 15px;
   }
 
   .layout-content-main-fix {

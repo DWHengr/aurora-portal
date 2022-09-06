@@ -7,10 +7,11 @@
 
 <script>
   export default {
-    name: 'Index',
+    name: 'ALogo',
     props: {
       collapsed: {
         type: Boolean,
+        default: false,
       },
     },
   };

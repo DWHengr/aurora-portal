@@ -3,7 +3,7 @@
     :options="menus"
     :mode="mode"
     :collapsed="collapsed"
-    inverted="true"
+    :inverted="true"
     :collapsed-width="64"
     :collapsed-icon-size="20"
     :indent="24"
@@ -73,20 +73,6 @@
           ? unref(selectedKeys)
           : unref(headerMenuSelectKey);
       });
-
-      watch(() => {
-        updateMenu();
-        if (props.collapsed) {
-          emit('update:collapsed', !props.collapsed);
-        }
-      });
-
-      watch(
-        () => currentRoute.fullPath,
-        () => {
-          updateMenu();
-        }
-      );
 
       function renderIcon(icon) {
         return () => h(NIcon, null, { default: () => h(icon) });
