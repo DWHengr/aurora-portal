@@ -1,6 +1,12 @@
 <template>
   <div>
-    <n-card :bordered="false" title="告警规则"> 可以根据告警对象创建告警规则 </n-card>
+    <n-card :bordered="false">
+      <div class="mb-4">
+        <n-icon :component="AlertOn20Filled" class="text-purple-800 align-middle" size="38" />
+        <h1 class="inline-block ml-2 align-middle" style="font-size: 18px">告警规则</h1>
+      </div>
+      <p> 可以根据告警对象创建告警规则</p>
+    </n-card>
     <n-card class="mt-[15px]">
       <!-- 操作栏 -->
       <div>
@@ -40,7 +46,8 @@
 
 <script>
   import { h, defineComponent, ref } from 'vue';
-  import { NTag, NButton, useMessage } from 'naive-ui';
+  import { NTag, NButton } from 'naive-ui';
+  import { AlertOn20Filled } from '@vicons/fluent';
 
   const createSeekOptions = () => {
     return [
@@ -144,6 +151,7 @@
         dVlaue,
         seekChage,
         seekOptionClick,
+        AlertOn20Filled,
       };
     },
   });

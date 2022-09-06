@@ -6,8 +6,8 @@
         class="ml-1 layout-header-trigger layout-header-trigger-min"
         @click="() => $emit('update:collapsed', !collapsed)"
       >
-        <n-icon :component="BookOutline" size="18" v-if="collapsed" />
-        <n-icon :component="BookOutline" size="18" v-else />
+        <n-icon :component="TextGrammarArrowRight20Filled" size="28" v-if="collapsed" />
+        <n-icon :component="TextGrammarArrowLeft20Filled" size="28" v-else />
       </div>
       <!-- 面包屑 -->
       <n-breadcrumb>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-  import { BookOutline } from '@vicons/ionicons5';
+  import { TextGrammarArrowRight20Filled, TextGrammarArrowLeft20Filled } from '@vicons/fluent';
   import { useRouter, useRoute } from 'vue-router';
   import { defineComponent, computed } from 'vue';
 
@@ -77,7 +77,8 @@
         return generator(route.matched);
       });
       return {
-        BookOutline,
+        TextGrammarArrowRight20Filled,
+        TextGrammarArrowLeft20Filled,
         breadcrumbList,
         dropdownSelect,
       };

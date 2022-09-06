@@ -28,7 +28,7 @@
   } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { NIcon } from 'naive-ui';
-  import { BookOutline as BookIcon } from '@vicons/ionicons5';
+  import { DocumentError20Filled, AlertOn20Filled, Settings20Filled } from '@vicons/fluent';
 
   export default defineComponent({
     name: 'AMenu',
@@ -83,17 +83,17 @@
           {
             label: '告警管理',
             key: '',
-            icon: renderIcon(BookIcon),
+            icon: renderIcon(Settings20Filled),
             children: [
               {
                 label: '告警规则',
                 key: 'rule',
-                icon: renderIcon(BookIcon),
+                icon: renderIcon(AlertOn20Filled),
               },
               {
                 label: '告警记录',
                 key: 'record',
-                icon: renderIcon(BookIcon),
+                icon: renderIcon(DocumentError20Filled),
               },
             ],
           },
