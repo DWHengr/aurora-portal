@@ -1,41 +1,38 @@
 <template>
   <div>
-    <n-dropdown
-      trigger="manual"
-      ref="seekDropdown"
-      @select="seekOptionClick"
-      placement="bottom-start"
-      :on-clickoutside="onClickoutside"
-      :show="showDropdown"
-      :options="currentOption"
-    >
-      <div @click="seekClick" class="container">
-        <n-tag
-          v-for="item in tags"
-          :key="item.key"
-          closable
-          @close="onTagDelete(item.key)"
-          class="seek-tag"
-        >
-          {{ item.value }}
-        </n-tag>
+    <div @click="seekClick" class="container">
+      <n-tag
+        v-for="item in tags"
+        :key="item.key"
+        closable
+        @close="onTagDelete(item.key)"
+        class="seek-tag"
+      >
+        {{ item.value }}
+      </n-tag>
+      <n-dropdown
+        trigger="manual"
+        ref="seekDropdown"
+        @select="seekOptionClick"
+        placement="bottom-start"
+        class="seek-dropdown"
+        style="background-color: rgba(221, 214, 254)"
+        :on-clickoutside="onClickoutside"
+        :show="showDropdown"
+        :options="currentOption"
+      >
         <input
           autosize
           class="seek-input"
           type="text"
-          @keyup.enter="onInputEnter"
+          @keyup.enter.stop="onInputEnter"
           v-model="inputValue"
           ref="seekInput"
           placeholder="请输入"
         />
-        <n-icon
-          :component="Dismiss20Filled"
-          @click.stop="onDeleteAll"
-          class="seek-icon"
-          size="18"
-        />
-      </div>
-    </n-dropdown>
+      </n-dropdown>
+      <n-icon :component="Dismiss20Filled" @click.stop="onDeleteAll" class="seek-icon" size="18" />
+    </div>
   </div>
 </template>
 
@@ -63,9 +60,10 @@
       const tags = ref([]);
       let currentOption = ref(props.seekOption);
       const selectedVlaue = ref(props.value);
-      let isBackfill = false;
 
       const seekClick = () => {
+        // eslint-disable-next-line no-console
+        console.log(showDropdown.value);
         showDropdown.value = !showDropdown.value;
         seekInput.value.focus();
       };
@@ -75,13 +73,9 @@
       });
 
       const onInputChange = () => {
-        isBackfill = true;
-        showDropdown.value = true;
         // input value is null. all show
         if (inputValue.value == null || inputValue.value == '') {
           currentOption.value = props.seekOption;
-          // eslint-disable-next-line no-console
-          console.log(currentOption);
           return;
         }
 
@@ -112,15 +106,12 @@
       };
 
       const seekOptionClick = (key, obj) => {
-        if (isBackfill) {
-          isBackfill = false;
-          return;
-        }
         seekInput.value.focus();
         const kv = inputValue.value?.split(/:|：/);
         for (let index = 0; index < props.seekOption.length; index++) {
           if (kv?.[0] == props.seekOption[index].label) {
             inputValue.value = kv[0] + ':' + obj.label;
+            onInputEnter();
             return;
           }
         }
@@ -129,7 +120,7 @@
       };
 
       const onInputEnter = () => {
-        isBackfill = false;
+        showDropdown.value = false;
         const kv = inputValue.value?.split(/:|：/);
         if (!kv || !kv[0] || !kv[1]) {
           inputValue.value = '';
@@ -270,5 +261,8 @@
     right: 8px;
     position: absolute;
     float: right;
+  }
+  .seek-dropdown {
+    background-color: rgba(221, 214, 254);
   }
 </style>
