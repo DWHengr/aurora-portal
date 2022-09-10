@@ -19,7 +19,7 @@
           <NButton type="primary" class="w-20"> 查找 </NButton>
         </n-input-group>
         <div class="inline-block">
-          <NButton type="primary" class="w-20 left-1"> 新增 </NButton>
+          <NButton type="primary" class="w-20 left-1" @click="onRuleCreate"> 新增 </NButton>
         </div>
       </div>
       <!-- 数据表格 -->
@@ -27,19 +27,15 @@
         <n-data-table :columns="columns" :data="data" :pagination="pagination" />
       </div>
     </n-card>
-    <AFilterSeekInput
-      class="w-full"
-      v-model:value="multipleSelectValue"
-      :seek-option="seekOption"
-    />
   </div>
 </template>
 
 <script>
   import { h, defineComponent, ref } from 'vue';
-  import { NTag, NButton } from 'naive-ui';
+  import { NButton } from 'naive-ui';
   import { AlertOn20Filled } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
+  import { useRouter } from 'vue-router';
 
   const createSeekOptions = () => {
     return [
@@ -134,28 +130,32 @@
       webhook: 'http://xxxx.com',
     },
   ];
-
-  const multipleSelectValue = ref([]);
-  const seekSelect = ref(null);
-  const dVlaue = ref('');
-
-  const seekOptionClick = (key) => {
-    seekSelect.value.$refs.triggerRef.$refs.patternInputRef._value = '1';
-    // eslint-disable-next-line no-console
-    console.log(seekSelect);
-    dVlaue.value = key;
-  };
-
-  const seekChage = (e) => {
-    // eslint-disable-next-line no-console
-    console.log(seekSelect.value.$emit);
-    seekSelect.value.focus();
-  };
-
   export default defineComponent({
     name: 'AlertRule',
     components: { AFilterSeekInput },
     setup() {
+      const multipleSelectValue = ref([]);
+      const seekSelect = ref(null);
+      const dVlaue = ref('');
+      const router = useRouter();
+
+      const seekOptionClick = (key) => {
+        seekSelect.value.$refs.triggerRef.$refs.patternInputRef._value = '1';
+        // eslint-disable-next-line no-console
+        console.log(seekSelect);
+        dVlaue.value = key;
+      };
+
+      const seekChage = (e) => {
+        // eslint-disable-next-line no-console
+        console.log(seekSelect.value.$emit);
+        seekSelect.value.focus();
+      };
+
+      const onRuleCreate = () => {
+        router.push({ name: 'rulecreate' });
+      };
+
       return {
         data: createData(),
         columns: createColumns(),
@@ -168,6 +168,7 @@
         dVlaue,
         seekChage,
         seekOptionClick,
+        onRuleCreate,
         AlertOn20Filled,
       };
     },

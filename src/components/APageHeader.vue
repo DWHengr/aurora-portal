@@ -53,20 +53,22 @@
       const route = useRoute();
 
       const generator = (routerMap) => {
-        return routerMap.map((item) => {
-          const currentMenu = {
-            ...item,
-            label: item.meta.title,
-            key: item.name,
-            disabled: item.path === '/',
-          };
-          // 是否有子菜单，并递归处理
-          if (item.children && item.children.length > 0) {
-            // Recursion
-            currentMenu.children = generator(item.children, currentMenu);
-          }
-          return currentMenu;
-        });
+        return routerMap
+          .map((item) => {
+            const currentMenu = {
+              ...item,
+              label: item.meta.title,
+              key: item.name,
+              disabled: item.path === '/',
+            };
+            // 是否有子菜单，并递归处理
+            if (item.children && item.children.length > 0) {
+              // Recursion
+              currentMenu.children = generator(item.children, currentMenu);
+            }
+            return currentMenu;
+          })
+          .filter((item) => !item.meta.isNoShow);
       };
 
       const dropdownSelect = (key) => {
