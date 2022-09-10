@@ -5,7 +5,7 @@ const routes = [
   {
     path: '/',
     name: 'index',
-    component: () => import('../views/Index.vue'),
+    component: () => import('@/views/Index.vue'),
     meta: [{ name: 'index', path: '/index' }],
     redirect: '/alert/rule',
     children: [AlertRule],

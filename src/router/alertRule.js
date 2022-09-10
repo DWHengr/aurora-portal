@@ -1,4 +1,4 @@
-import layout from '../components/layout/index.vue';
+import layout from '@/components/layout/index.vue';
 
 export default {
   path: '/alert',
@@ -13,7 +13,7 @@ export default {
         parentName: '告警管理',
         path: '/rule',
       },
-      component: () => import('../views/alert/AlertRule.vue'),
+      component: () => import('@/views/alert/alert_rule/AlertRule.vue'),
     },
     {
       path: 'record',
@@ -23,7 +23,7 @@ export default {
         parentName: '告警管理',
         path: '/record',
       },
-      component: () => import('../views/alert/AlertRecord.vue'),
+      component: () => import('@/views/alert/alert_record/AlertRecord.vue'),
     },
   ],
 };

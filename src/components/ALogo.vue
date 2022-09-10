@@ -1,6 +1,6 @@
 <template>
   <div class="logo">
-    <img src="../assets/logo.png" alt="" :class="{ 'mr-2': !collapsed }" />
+    <img src="@/assets/logo.png" alt="" :class="{ 'mr-2': !collapsed }" />
     <h2 v-show="!collapsed" class="title">Aurora</h2>
   </div>
 </template>

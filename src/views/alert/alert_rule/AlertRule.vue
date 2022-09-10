@@ -11,25 +11,11 @@
       <!-- 操作栏 -->
       <div>
         <n-input-group class="w-[calc(100%-5.25rem)]">
-          <n-dropdown
-            trigger="click"
-            @select="seekOptionClick"
-            placement="bottom-start"
-            :options="seekOption"
-          >
-            <n-select
-              ref="seekSelect"
-              v-model:value="multipleSelectValue"
-              :default-value="dVlaue"
-              filterable
-              multiple
-              tag
-              placeholder="输出查找内容 名称:规则1"
-              :show-arrow="false"
-              :show="false"
-              :clearable="true"
-            />
-          </n-dropdown>
+          <AFilterSeekInput
+            class="w-full"
+            v-model:value="multipleSelectValue"
+            :seek-option="seekOption"
+          />
           <NButton type="primary" class="w-20"> 查找 </NButton>
         </n-input-group>
         <div class="inline-block">
@@ -41,6 +27,11 @@
         <n-data-table :columns="columns" :data="data" :pagination="pagination" />
       </div>
     </n-card>
+    <AFilterSeekInput
+      class="w-full"
+      v-model:value="multipleSelectValue"
+      :seek-option="seekOption"
+    />
   </div>
 </template>
 
@@ -48,12 +39,35 @@
   import { h, defineComponent, ref } from 'vue';
   import { NTag, NButton } from 'naive-ui';
   import { AlertOn20Filled } from '@vicons/fluent';
+  import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
 
   const createSeekOptions = () => {
     return [
       {
         label: '名称',
         key: 'name',
+      },
+      {
+        label: '告警等级',
+        key: 'severity',
+        map: [
+          {
+            label: '提示',
+            key: 'hint',
+          },
+          {
+            label: '次要',
+            key: 'minor',
+          },
+          {
+            label: '重要',
+            key: 'importance',
+          },
+          {
+            label: '紧急',
+            key: 'urgency',
+          },
+        ],
       },
     ];
   };
@@ -121,23 +135,26 @@
     },
   ];
 
-  const multipleSelectValue = ref(null);
+  const multipleSelectValue = ref([]);
   const seekSelect = ref(null);
   const dVlaue = ref('');
 
   const seekOptionClick = (key) => {
+    seekSelect.value.$refs.triggerRef.$refs.patternInputRef._value = '1';
     // eslint-disable-next-line no-console
-    console.log(seekSelect.value.fallbackOption);
+    console.log(seekSelect);
     dVlaue.value = key;
   };
 
-  const seekChage = () => {
+  const seekChage = (e) => {
     // eslint-disable-next-line no-console
-    console.log(seekSelect.value);
+    console.log(seekSelect.value.$emit);
+    seekSelect.value.focus();
   };
 
   export default defineComponent({
     name: 'AlertRule',
+    components: { AFilterSeekInput },
     setup() {
       return {
         data: createData(),

@@ -29,10 +29,10 @@
 </template>
 
 <script setup>
-  import AMenu from '../components/AMenu.vue';
-  import ALogo from '../components/ALogo.vue';
+  import AMenu from '@/components/AMenu.vue';
+  import ALogo from '@/components/ALogo.vue';
   import { ref } from 'vue';
-  import APageHeader from '../components/APageHeader.vue';
+  import APageHeader from '@/components/APageHeader.vue';
 
   const collapsed = ref(false);
 </script>
