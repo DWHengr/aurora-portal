@@ -90,6 +90,8 @@
 
 <style lang="less">
   .layout-header {
+    color: white;
+    background-color: rgb(0, 20, 40);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -127,6 +129,10 @@
 
       ::v-deep(.ant-breadcrumb span:last-child .link-text) {
         color: #515a6e;
+      }
+
+      .link-text {
+        color: white;
       }
 
       .n-breadcrumb {
@@ -175,7 +181,7 @@
 
       .anticon {
         font-size: 16px;
-        color: #515a6e;
+        color: white;
       }
     }
 
