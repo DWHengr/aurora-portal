@@ -62,8 +62,6 @@
       const selectedVlaue = ref(props.value);
 
       const seekClick = () => {
-        // eslint-disable-next-line no-console
-        console.log(showDropdown.value);
         showDropdown.value = !showDropdown.value;
         seekInput.value.focus();
       };
@@ -238,6 +236,7 @@
     box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
   }
   .seek-input {
+    margin-left: 2px;
     height: 30px;
     width: 300px;
     font-size: 15px;
