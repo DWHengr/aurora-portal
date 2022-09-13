@@ -1,13 +1,13 @@
 <template>
   <div>
-    <n-card :bordered="false">
+    <ACard :bordered="false">
       <div class="mb-4">
         <n-icon :component="AlertOn20Filled" class="text-purple-800 align-middle" size="38" />
         <h1 class="inline-block ml-2 align-middle" style="font-size: 18px">告警规则</h1>
       </div>
       <p> 可以根据告警对象创建告警规则</p>
-    </n-card>
-    <n-card class="mt-[15px]">
+    </ACard>
+    <ACard class="mt-[15px]" :gradual="false">
       <!-- 操作栏 -->
       <div>
         <n-input-group class="w-[calc(100%-5.25rem)]">
@@ -26,7 +26,7 @@
       <div class="mt-[10px]">
         <n-data-table :columns="columns" :data="data" :pagination="pagination" />
       </div>
-    </n-card>
+    </ACard>
   </div>
 </template>
 
@@ -35,6 +35,7 @@
   import { NButton } from 'naive-ui';
   import { AlertOn20Filled } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
+  import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
 
   const createSeekOptions = () => {
@@ -132,7 +133,7 @@
   ];
   export default defineComponent({
     name: 'AlertRule',
-    components: { AFilterSeekInput },
+    components: { AFilterSeekInput, ACard },
     setup() {
       const multipleSelectValue = ref([]);
       const seekSelect = ref(null);
