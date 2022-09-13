@@ -34,7 +34,7 @@
   import { ref } from 'vue';
   import APageHeader from '@/components/APageHeader.vue';
 
-  const collapsed = ref(false);
+  const collapsed = ref(true);
 </script>
 
 <style lang="less">
