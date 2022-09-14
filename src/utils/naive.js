@@ -65,6 +65,7 @@ import {
   NTimePicker,
   NBackTop,
   NSkeleton,
+  NScrollbar,
 } from 'naive-ui';
 
 const naive = create({
@@ -134,6 +135,7 @@ const naive = create({
     NTimePicker,
     NBackTop,
     NSkeleton,
+    NScrollbar,
   ],
 });
 

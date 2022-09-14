@@ -1,69 +1,71 @@
 <template>
-  <div :style="{ height: screenHeight + 'px' }" class="overflow-y-scroll">
-    <a-card>
-      <div class="flex items-center">
-        <NButton type="primary" size="medium" @click="onBaackRulePage">
-          <n-icon :component="ArrowReply20Filled" class="mr-2" size="22" />
-          返回告警规则页面
-        </NButton>
-        <div class="cut-off"></div>
-        <p class="text-16px font-medium"> 创建告警规则</p>
-      </div>
-    </a-card>
-    <a-card :gradual="false" class="mt-[15px]">
-      <n-form
-        ref="formRef"
-        :model="model"
-        :rules="rules"
-        :label-width="100"
-        label-placement="left"
-        :style="{
-          maxWidth: '640px',
-        }"
-      >
-        <p class="divide-label">基本信息</p>
-        <n-form-item label="名称:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <n-form-item label="告警等级:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <n-form-item label="回调接口:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <p class="divide-label">告警对象</p>
-        <n-form-item label="名称:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <n-form-item label="告警等级:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <n-form-item label="回调接口:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <p class="divide-label">告警规则</p>
-        <n-form-item label="名称:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <n-form-item label="告警等级:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <n-form-item label="回调接口:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <p class="divide-label">告警规则</p>
-        <n-form-item label="名称:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <n-form-item label="告警等级:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-        <n-form-item label="回调接口:" path="inputValue">
-          <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-        </n-form-item>
-      </n-form>
-    </a-card>
-  </div>
+  <n-scrollbar :style="{ 'max-height': screenHeight + 'px' }">
+    <div>
+      <a-card>
+        <div class="flex items-center">
+          <NButton type="primary" size="medium" @click="onBaackRulePage">
+            <n-icon :component="ArrowReply20Filled" class="mr-2" size="22" />
+            返回告警规则页面
+          </NButton>
+          <div class="cut-off"></div>
+          <p class="text-16px font-medium"> 创建告警规则</p>
+        </div>
+      </a-card>
+      <a-card :gradual="false" class="mt-[15px]">
+        <n-form
+          ref="formRef"
+          :model="model"
+          :rules="rules"
+          :label-width="100"
+          label-placement="left"
+          :style="{
+            maxWidth: '640px',
+          }"
+        >
+          <p class="divide-label">基本信息</p>
+          <n-form-item label="名称:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <n-form-item label="告警等级:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <n-form-item label="回调接口:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <p class="divide-label">告警对象</p>
+          <n-form-item label="名称:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <n-form-item label="告警等级:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <n-form-item label="回调接口:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <p class="divide-label">告警规则</p>
+          <n-form-item label="名称:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <n-form-item label="告警等级:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <n-form-item label="回调接口:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <p class="divide-label">告警规则</p>
+          <n-form-item label="名称:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <n-form-item label="告警等级:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+          <n-form-item label="回调接口:" path="inputValue">
+            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          </n-form-item>
+        </n-form>
+      </a-card>
+    </div>
+  </n-scrollbar>
 </template>
 
 <script>
