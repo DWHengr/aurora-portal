@@ -66,6 +66,7 @@ import {
   NBackTop,
   NSkeleton,
   NScrollbar,
+  NDynamicInput,
 } from 'naive-ui';
 
 const naive = create({
@@ -136,6 +137,7 @@ const naive = create({
     NBackTop,
     NSkeleton,
     NScrollbar,
+    NDynamicInput,
   ],
 });
 

@@ -16,7 +16,7 @@
           ref="formRef"
           :model="model"
           :rules="rules"
-          :label-width="100"
+          :label-width="120"
           label-placement="left"
           :style="{
             maxWidth: '640px',
@@ -33,25 +33,121 @@
             <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
           </n-form-item>
           <p class="divide-label">告警对象</p>
-          <n-form-item label="名称:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-          </n-form-item>
-          <n-form-item label="告警等级:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-          </n-form-item>
-          <n-form-item label="回调接口:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-          </n-form-item>
+          <n-dynamic-input
+            class="pl-[120px]"
+            v-model:value="model.alertObject"
+            item-style="margin-bottom: 0;"
+            :on-create="onCreateAlertObject"
+          >
+            <template #create-button-default> 增加告警对象键值对 </template>
+            <template #default="{ index }">
+              <div style="display: flex">
+                <n-form-item
+                  ignore-path-change
+                  :show-label="false"
+                  :path="`alertObject[${index}].name`"
+                  :rule="dynamicInputRule"
+                >
+                  <n-input
+                    v-model:value="model.alertObject[index].name"
+                    placeholder="key"
+                    @keydown.enter.prevent
+                  />
+                </n-form-item>
+                <div style="height: 34px; line-height: 34px; margin: 0 8px"> = </div>
+                <n-form-item
+                  ignore-path-change
+                  :show-label="false"
+                  :path="`alertObject[${index}].value`"
+                  :rule="dynamicInputRule"
+                >
+                  <n-input
+                    v-model:value="model.alertObject[index].value"
+                    placeholder="Value"
+                    @keydown.enter.prevent
+                  />
+                </n-form-item>
+              </div>
+            </template>
+          </n-dynamic-input>
           <p class="divide-label">告警规则</p>
-          <n-form-item label="名称:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-          </n-form-item>
-          <n-form-item label="告警等级:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-          </n-form-item>
-          <n-form-item label="回调接口:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
-          </n-form-item>
+          <div>
+            <div class="flex justify-end"
+              >告警规则：满足以下指标判断条件，且告警规则持续时间
+              <n-form-item class="w-38 inline-block" path="selectValue">
+                <n-select
+                  v-model:value="model.selectValue"
+                  placeholder="告警规则持续时间"
+                  :options="generalOptions"
+                /> </n-form-item
+              >，则触发。</div
+            >
+            <div>
+              <n-dynamic-input
+                class="pl-[120px]"
+                v-model:value="model.alertMetric"
+                item-style="margin-bottom: 0;"
+                :on-create="onCreateAlertMetric"
+              >
+                <template #create-button-default>新增告警指标 </template>
+                <template #default="{ index }">
+                  <div style="display: flex">
+                    <n-form-item
+                      ignore-path-change
+                      :show-label="false"
+                      class="w-38"
+                      :path="`alertMetric[${index}].metric_id`"
+                    >
+                      <n-select
+                        v-model:value="model.alertMetric[index].metric_id"
+                        placeholder="告警指标"
+                        :options="generalOptions"
+                      />
+                    </n-form-item>
+                    <n-form-item
+                      class="w-30"
+                      ignore-path-change
+                      :show-label="false"
+                      :path="`alertMetric[${index}].statistics`"
+                      :rule="dynamicInputRule"
+                    >
+                      <n-select
+                        v-model:value="model.alertMetric[index].statistics"
+                        placeholder="统计时间"
+                        :options="generalOptions"
+                      />
+                    </n-form-item>
+                    <n-form-item
+                      class="w-20"
+                      ignore-path-change
+                      :show-label="false"
+                      :path="`alertMetric[${index}].operator`"
+                      :rule="dynamicInputRule"
+                    >
+                      <n-select
+                        v-model:value="model.alertMetric[index].operator"
+                        placeholder="操作符"
+                        :options="generalOptions"
+                      />
+                    </n-form-item>
+                    <n-form-item
+                      class="w-20"
+                      ignore-path-change
+                      :show-label="false"
+                      :path="`alertMetric[${index}].alert_value`"
+                      :rule="dynamicInputRule"
+                    >
+                      <n-input
+                        v-model:value="model.alertMetric[index].alert_value"
+                        placeholder="告警值"
+                        @keydown.enter.prevent
+                      />
+                    </n-form-item>
+                  </div>
+                </template>
+              </n-dynamic-input>
+            </div>
+          </div>
           <p class="divide-label">告警规则</p>
           <n-form-item label="名称:" path="inputValue">
             <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
@@ -83,6 +179,8 @@
         name: null,
         severity: null,
         webhook: null,
+        alertObject: [],
+        alertMetric: [],
       });
 
       onMounted(() => {
@@ -96,10 +194,28 @@
       const onBaackRulePage = () => {
         router.push({ name: 'rule' });
       };
+
+      const onCreateAlertObject = () => {
+        return {
+          name: '',
+          value: '',
+        };
+      };
+
+      const onCreateAlertMetric = () => {
+        return {
+          metric_id: null,
+          statistics: null,
+          operator: null,
+          alert_value: '',
+        };
+      };
       return {
         model,
         screenHeight,
         onBaackRulePage,
+        onCreateAlertObject,
+        onCreateAlertMetric,
         ArrowReply20Filled,
       };
     },
