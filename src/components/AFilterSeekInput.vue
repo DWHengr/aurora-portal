@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div @click="seekClick" class="container">
+    <div @click="seekClick" class="box">
       <n-tag
         v-for="item in tags"
         :key="item.key"
@@ -217,7 +217,7 @@
 </script>
 
 <style lang="less" scoped>
-  .container {
+  .box {
     border: 1px solid rgba(209 209 209);
     border-radius: 5px;
     display: flex;
@@ -226,13 +226,13 @@
     padding: 1px;
     position: relative;
   }
-  .container:hover {
+  .box:hover {
     border-color: rgba(91, 33, 182);
   }
-  .container:active {
+  .box:active {
     box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
   }
-  .container:focus {
+  .box:focus {
     box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
   }
   .seek-input {
