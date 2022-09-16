@@ -11,7 +11,7 @@
       class="layout-sider"
     >
       <ALogo :collapsed="collapsed" />
-      <AMenu v-model:collapsed="collapsed" />
+      <AMenu v-model:collapsed="collapsed" :menus="menus" />
     </n-layout-sider>
     <n-layout>
       <n-layout-content class="layout-content layout-default-background">
@@ -31,6 +31,7 @@
 <script setup>
   import AMenu from '@/components/AMenu.vue';
   import ALogo from '@/components/ALogo.vue';
+  import { menus } from './js/menu';
   import { ref } from 'vue';
   import APageHeader from '@/components/APageHeader.vue';
 

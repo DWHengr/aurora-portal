@@ -15,25 +15,17 @@
 </template>
 
 <script>
-  import {
-    defineComponent,
-    ref,
-    onMounted,
-    reactive,
-    computed,
-    watch,
-    toRefs,
-    unref,
-    h,
-  } from 'vue';
+  import { defineComponent, ref, reactive, computed, toRefs, unref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { NIcon } from 'naive-ui';
-  import { DocumentError20Filled, AlertOn20Filled, Settings20Filled } from '@vicons/fluent';
 
   export default defineComponent({
     name: 'AMenu',
     components: {},
     props: {
+      menus: {
+        type: Array,
+        default: null,
+      },
       mode: {
         // 菜单模式
         type: String,
@@ -74,32 +66,6 @@
           : unref(headerMenuSelectKey);
       });
 
-      function renderIcon(icon) {
-        return () => h(NIcon, null, { default: () => h(icon) });
-      }
-
-      function updateMenu() {
-        menus.value = [
-          {
-            label: '告警管理',
-            key: '',
-            icon: renderIcon(Settings20Filled),
-            children: [
-              {
-                label: '告警规则',
-                key: 'rule',
-                icon: renderIcon(AlertOn20Filled),
-              },
-              {
-                label: '告警记录',
-                key: 'record',
-                icon: renderIcon(DocumentError20Filled),
-              },
-            ],
-          },
-        ];
-      }
-
       function updateSelectedKeys() {
         const matched = currentRoute.matched;
         state.openKeys = matched.map((item) => item.name);
@@ -135,13 +101,8 @@
         return subRouteChildren.includes(key);
       }
 
-      onMounted(() => {
-        updateMenu();
-      });
-
       return {
         ...toRefs(state),
-        menus,
         selectedKeys,
         headerMenuSelectKey,
         getSelectedKeys,
