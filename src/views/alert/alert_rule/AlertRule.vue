@@ -9,7 +9,7 @@
     </ACard>
     <ACard class="mt-[15px]" :gradual="false">
       <!-- 操作栏 -->
-      <div>
+      <div v-show="checkedRowKeys.length <= 0">
         <n-input-group class="w-[calc(100%-5.25rem)]">
           <AFilterSeekInput
             class="w-full"
@@ -22,9 +22,20 @@
           <NButton type="primary" class="w-20 left-1" @click="onRuleCreate"> 新增 </NButton>
         </div>
       </div>
+      <div v-show="checkedRowKeys.length > 0">
+        <div class="inline-block">
+          <NButton type="error" class="w-20" @click="onRuleDelete"> 删除 </NButton>
+        </div>
+      </div>
       <!-- 数据表格 -->
       <div class="mt-[10px]">
-        <n-data-table :columns="columns" :data="data" :pagination="pagination" />
+        <n-data-table
+          :row-key="(row) => row.id"
+          v-model:checked-row-keys="checkedRowKeys"
+          :columns="columns"
+          :data="data"
+          :pagination="pagination"
+        />
       </div>
     </ACard>
   </div>
@@ -72,6 +83,9 @@
   const createColumns = () => {
     return [
       {
+        type: 'selection',
+      },
+      {
         title: '名称',
         key: 'name',
       },
@@ -110,27 +124,28 @@
 
   const createData = () => [
     {
-      key: 0,
+      id: 0,
       name: '规则1',
       rulesStatus: '启用',
       severity: '提示',
       webhook: 'http://xxxx.com',
     },
     {
-      key: 1,
+      id: 1,
       name: '规则1',
       rulesStatus: '启用',
       severity: '提示',
       webhook: 'http://xxxx.com',
     },
     {
-      key: 2,
+      id: 2,
       name: '规则1',
       rulesStatus: '启用',
       severity: '提示',
       webhook: 'http://xxxx.com',
     },
   ];
+
   export default defineComponent({
     name: 'AlertRule',
     components: { AFilterSeekInput, ACard },
@@ -139,6 +154,7 @@
       const seekSelect = ref(null);
       const dVlaue = ref('');
       const router = useRouter();
+      const checkedRowKeys = ref([]);
 
       const seekOptionClick = (key) => {
         seekSelect.value.$refs.triggerRef.$refs.patternInputRef._value = '1';
@@ -157,6 +173,11 @@
         router.push({ name: 'rulecreate' });
       };
 
+      const onRuleDelete = () => {
+        // eslint-disable-next-line no-console
+        console.log(checkedRowKeys.value);
+      };
+
       return {
         data: createData(),
         columns: createColumns(),
@@ -167,9 +188,11 @@
         multipleSelectValue,
         seekSelect,
         dVlaue,
+        checkedRowKeys,
         seekChage,
         seekOptionClick,
         onRuleCreate,
+        onRuleDelete,
         AlertOn20Filled,
       };
     },
