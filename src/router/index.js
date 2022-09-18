@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AlertRule from './alertRule';
+import AlertRule from './alert';
 import Notify from './notify';
 
 const routes = [
