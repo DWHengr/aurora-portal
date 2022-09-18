@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AlertRule from './alertRule';
+import Notify from './notify';
 
 const routes = [
   {
@@ -8,7 +9,7 @@ const routes = [
     component: () => import('@/views/Index.vue'),
     meta: [{ name: 'index', path: '/index' }],
     redirect: '/alert/rule',
-    children: [AlertRule],
+    children: [AlertRule, Notify],
   },
 ];
 
