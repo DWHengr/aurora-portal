@@ -1,7 +1,9 @@
 <template>
-  <NConfigProvider :theme-overrides="ThemeOverrides">
-    <RouterView />
-  </NConfigProvider>
+  <NMessageProvider>
+    <NConfigProvider :theme-overrides="ThemeOverrides">
+      <RouterView />
+    </NConfigProvider>
+  </NMessageProvider>
 </template>
 
 <script setup>
