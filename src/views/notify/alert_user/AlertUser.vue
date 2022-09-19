@@ -19,7 +19,7 @@
           <NButton type="primary" class="w-20"> 查找 </NButton>
         </n-input-group>
         <div class="inline-block">
-          <NButton type="primary" class="w-20 left-1" @click="onUserCreate"> 新增 </NButton>
+          <NButton type="primary" class="w-20 left-1" @click="showModal = true"> 新增 </NButton>
         </div>
       </div>
       <div v-show="checkedRowKeys.length > 0">
@@ -40,13 +40,52 @@
         />
       </div>
     </ACard>
+    <n-modal v-model:show="showModal" class="w-[600px]" :mask-closable="false" preset="card">
+      <template #header>
+        <div class="model-header items-center">
+          <NIcon size="26" class="text-purple-800 mr-2" :component="Add12Filled" />
+          <div>新增告警用户</div>
+        </div>
+      </template>
+      <div class="mt-5">
+        <n-form
+          ref="formRef"
+          :model="userData"
+          :rules="rules"
+          :label-width="60"
+          label-placement="left"
+          :style="{
+            maxWidth: '780px',
+          }"
+        >
+          <n-form-item label="姓名:" path="name">
+            <n-input class="w-9" v-model:value="userData.name" placeholder="请输入用户姓名" />
+          </n-form-item>
+          <n-form-item label="部门:" path="department">
+            <n-input class="w-9" v-model:value="userData.department" placeholder="请输入用户部门" />
+          </n-form-item>
+          <n-form-item label="邮箱:" path="email">
+            <n-input class="w-9" v-model:value="userData.email" placeholder="请输入用户邮箱" />
+          </n-form-item>
+          <n-form-item label="手机:" path="phone">
+            <n-input class="w-9" v-model:value="userData.phone" placeholder="请输入用户手机" />
+          </n-form-item>
+        </n-form>
+      </div>
+      <template #action>
+        <div class="flex justify-end w-full">
+          <NButton class="w-20 m-1" @click="showModal = false"> 取消 </NButton>
+          <NButton type="primary" class="w-20 m-1"> 确定 </NButton>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
 <script>
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
   import { NButton } from 'naive-ui';
-  import { People20Filled } from '@vicons/fluent';
+  import { People20Filled, Add12Filled } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
@@ -111,6 +150,16 @@
     ];
   };
 
+  const rules = {
+    name: [
+      {
+        required: true,
+        message: '请输入用户姓名',
+        trigger: ['input', 'blur'],
+      },
+    ],
+  };
+
   export default defineComponent({
     name: 'AlertUser',
     components: { AFilterSeekInput, ACard },
@@ -120,6 +169,8 @@
       const router = useRouter();
       const checkedRowKeys = ref([]);
       const data = ref([]);
+      const showModal = ref(false);
+      const userData = ref({});
       const pagination = reactive({
         pageSize: 10,
       });
@@ -156,12 +207,25 @@
         multipleSelectValue,
         seekSelect,
         checkedRowKeys,
+        showModal,
+        userData,
+        rules,
         seekChage,
         onUserCreate,
         onUserDelete,
         page,
         People20Filled,
+        Add12Filled,
       };
     },
   });
 </script>
+
+<style lang="less">
+  .model-header {
+    display: flex;
+    color: black;
+    font-size: 20px;
+    background: linear-gradient(to right, white, #c4b5fd);
+  }
+</style>
