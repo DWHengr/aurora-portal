@@ -7,4 +7,7 @@ export default {
   create(param) {
     return Http.post('/api/v1/user/create', param);
   },
+  deletes(param) {
+    return Http.post('/api/v1/user/deletes', param);
+  },
 };

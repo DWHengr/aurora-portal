@@ -210,16 +210,33 @@
         formRef.value?.validate((errors) => {
           if (!errors) {
             userapi.create(userData.value).then((res) => {
-              page();
-              formRef.value.restoreValidation();
-              userData.value = {};
-              showModal.value = false;
+              if (res.code == 0) {
+                page();
+                formRef.value.restoreValidation();
+                userData.value = {};
+                showModal.value = false;
+                window.$message.success('添加成功', {
+                  duration: 0,
+                });
+              }
             });
           }
         });
       };
 
-      const onUserDelete = () => {};
+      const onUserDelete = () => {
+        if (checkedRowKeys.value?.length > 0) {
+          userapi.deletes(checkedRowKeys.value).then((res) => {
+            if (res.code == 0) {
+              page();
+              checkedRowKeys.value = [];
+              window.$message.success('删除成功');
+            }
+          });
+        }
+        // eslint-disable-next-line no-console
+        console.log(checkedRowKeys.value);
+      };
 
       return {
         columns: createColumns(),
