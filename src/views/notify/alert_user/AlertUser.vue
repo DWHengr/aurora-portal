@@ -75,7 +75,7 @@
       <template #action>
         <div class="flex justify-end w-full">
           <NButton class="w-20 m-1" @click="showModal = false"> 取消 </NButton>
-          <NButton type="primary" class="w-20 m-1"> 确定 </NButton>
+          <NButton type="primary" class="w-20 m-1" @click="onUserCreate"> 确定 </NButton>
         </div>
       </template>
     </n-modal>
@@ -151,13 +151,25 @@
   };
 
   const rules = {
-    name: [
-      {
-        required: true,
-        message: '请输入用户姓名',
-        trigger: ['input', 'blur'],
+    name: {
+      required: true,
+      message: '请输入用户姓名',
+      trigger: ['input', 'blur'],
+    },
+    phone: {
+      trigger: ['input'],
+      message: '手机格式错误',
+      validator: (rule, value) => {
+        if (value) return /^1[345678]\d{9}$/.test(value);
       },
-    ],
+    },
+    email: {
+      trigger: ['input'],
+      message: '邮箱格式错误',
+      validator: (rule, value) => {
+        if (value) return /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value);
+      },
+    },
   };
 
   export default defineComponent({
@@ -171,6 +183,7 @@
       const data = ref([]);
       const showModal = ref(false);
       const userData = ref({});
+      const formRef = ref(null);
       const pagination = reactive({
         pageSize: 10,
       });
@@ -183,10 +196,8 @@
         userapi.page({ page: pagedata ? pagedata : 1, size: pagination.pageSize }).then((res) => {
           if (res.code == 0) {
             data.value = res.data.dataList;
-            // pagination.itemCount = res.data.total;
+            pagination.itemCount = res.data.total;
             pagination.pageCount = Math.ceil(res.data.total / pagination.pageSize);
-            // eslint-disable-next-line no-console
-            console.log(pagination);
           }
         });
       };
@@ -195,7 +206,18 @@
         seekSelect.value.focus();
       };
 
-      const onUserCreate = () => {};
+      const onUserCreate = () => {
+        formRef.value?.validate((errors) => {
+          if (!errors) {
+            userapi.create(userData.value).then((res) => {
+              page();
+              formRef.value.restoreValidation();
+              userData.value = {};
+              showModal.value = false;
+            });
+          }
+        });
+      };
 
       const onUserDelete = () => {};
 
@@ -210,6 +232,7 @@
         showModal,
         userData,
         rules,
+        formRef,
         seekChage,
         onUserCreate,
         onUserDelete,
