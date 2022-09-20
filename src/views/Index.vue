@@ -34,8 +34,10 @@
   import { menus } from './js/menu';
   import { ref } from 'vue';
   import APageHeader from '@/components/APageHeader.vue';
+  import { useMessage } from 'naive-ui';
 
   const collapsed = ref(true);
+  window.$message = useMessage();
 </script>
 
 <style lang="less">

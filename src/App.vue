@@ -1,9 +1,9 @@
 <template>
-  <NMessageProvider>
-    <NConfigProvider :theme-overrides="ThemeOverrides">
+  <NConfigProvider :theme-overrides="ThemeOverrides">
+    <NMessageProvider>
       <RouterView />
-    </NConfigProvider>
-  </NMessageProvider>
+    </NMessageProvider>
+  </NConfigProvider>
 </template>
 
 <script setup>
@@ -16,6 +16,9 @@
       borderRadius: '5px',
       iconColor: '#6d28d9',
       fontWeight: 600,
+    },
+    Message: {
+      iconColorSuccess: '#6d28d9',
     },
   };
 </script>
