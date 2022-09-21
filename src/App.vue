@@ -1,7 +1,9 @@
 <template>
   <NConfigProvider :theme-overrides="ThemeOverrides">
     <NMessageProvider>
-      <RouterView />
+      <NDialogProvider>
+        <RouterView />
+      </NDialogProvider>
     </NMessageProvider>
   </NConfigProvider>
 </template>
@@ -19,6 +21,21 @@
     },
     Message: {
       iconColorSuccess: '#6d28d9',
+    },
+    Dialog: {
+      iconColorWarning: '#6d28d9',
+      peers: {
+        Button: {
+          colorWarning: '#8b5cf6',
+          colorHoverWarning: '#6d28d9',
+          colorPressedWarning: '#6d28d9',
+          colorFocusWarning: '#6d28d9',
+          borderWarning: '#8b5cf6',
+          borderHoverWarning: '#8b5cf6',
+          borderPressedWarning: '#8b5cf6',
+          borderFocusWarning: '#8b5cf6',
+        },
+      },
     },
   };
 </script>
