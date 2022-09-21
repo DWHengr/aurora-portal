@@ -90,6 +90,7 @@
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
   import userapi from '@/api/user.js';
+  import { useDialog } from 'naive-ui';
 
   const createSeekOptions = () => {
     return [
@@ -108,44 +109,6 @@
       {
         label: '手机',
         key: 'phone',
-      },
-    ];
-  };
-
-  const createColumns = () => {
-    return [
-      {
-        type: 'selection',
-      },
-      {
-        title: '名称',
-        key: 'name',
-      },
-      {
-        title: '部门',
-        key: 'department',
-      },
-      {
-        title: '邮箱',
-        key: 'email',
-      },
-      {
-        title: '手机',
-        key: 'phone',
-      },
-      {
-        title: '操作',
-        key: 'actions',
-        render(row) {
-          return h(
-            NButton,
-            {
-              type: 'error',
-              size: 'small',
-            },
-            { default: () => '删除' }
-          );
-        },
       },
     ];
   };
@@ -176,6 +139,7 @@
     name: 'AlertUser',
     components: { AFilterSeekInput, ACard },
     setup() {
+      const dialog = useDialog();
       const multipleSelectValue = ref([]);
       const seekSelect = ref(null);
       const router = useRouter();
@@ -187,6 +151,42 @@
       const pagination = reactive({
         pageSize: 10,
       });
+      const columns = [
+        {
+          type: 'selection',
+        },
+        {
+          title: '名称',
+          key: 'name',
+        },
+        {
+          title: '部门',
+          key: 'department',
+        },
+        {
+          title: '邮箱',
+          key: 'email',
+        },
+        {
+          title: '手机',
+          key: 'phone',
+        },
+        {
+          title: '操作',
+          key: 'actions',
+          render(row) {
+            return h(
+              NButton,
+              {
+                type: 'error',
+                size: 'small',
+                onClick: () => onUserDeleteTip(row),
+              },
+              { default: () => '删除' }
+            );
+          },
+        },
+      ];
 
       onMounted(() => {
         page();
@@ -223,10 +223,25 @@
           }
         });
       };
+      const onUserDeleteTip = (row) => {
+        // eslint-disable-next-line no-console
+        console.log(useDialog);
+        dialog.warning({
+          title: '删除警告',
+          content: '确定删除' + row.name + '?',
+          positiveText: '确定',
+          negativeText: '取消',
+          onPositiveClick: () => {
+            onUserDelete(row);
+          },
+        });
+      };
 
-      const onUserDelete = () => {
-        if (checkedRowKeys.value?.length > 0) {
-          userapi.deletes(checkedRowKeys.value).then((res) => {
+      const onUserDelete = (row) => {
+        let ids = [...checkedRowKeys.value];
+        if (row.id) ids.push(row.id);
+        if (ids.length > 0 || row.id) {
+          userapi.deletes(ids).then((res) => {
             if (res.code == 0) {
               page();
               checkedRowKeys.value = [];
@@ -234,13 +249,11 @@
             }
           });
         }
-        // eslint-disable-next-line no-console
-        console.log(checkedRowKeys.value);
       };
 
       return {
-        columns: createColumns(),
         seekOption: createSeekOptions(),
+        columns,
         data,
         pagination,
         multipleSelectValue,
