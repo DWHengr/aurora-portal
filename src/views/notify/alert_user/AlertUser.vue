@@ -24,7 +24,7 @@
       </div>
       <div v-show="checkedRowKeys.length > 0">
         <div class="inline-block">
-          <NButton type="error" class="w-20" @click="onUserDelete"> 删除 </NButton>
+          <NButton type="error" class="w-20" @click="onUserDeleteTip"> 删除 </NButton>
         </div>
       </div>
       <!-- 数据表格 -->
@@ -33,6 +33,12 @@
           remote
           :row-key="(row) => row.id"
           v-model:checked-row-keys="checkedRowKeys"
+          :on-update:checked-row-keys="
+            (keys, rows) => {
+              checkedRowKeys = keys;
+              checkedRows = rows;
+            }
+          "
           :columns="columns"
           :data="data"
           :pagination="pagination"
@@ -144,6 +150,7 @@
       const seekSelect = ref(null);
       const router = useRouter();
       const checkedRowKeys = ref([]);
+      const checkedRows = ref([]);
       const data = ref([]);
       const showModal = ref(false);
       const userData = ref({});
@@ -225,22 +232,38 @@
       };
       const onUserDeleteTip = (row) => {
         // eslint-disable-next-line no-console
-        console.log(useDialog);
+        console.log(checkedRows.value);
+        let ids = [];
+        let names = [];
+        if (row.id) {
+          checkedRows.value = [];
+          checkedRowKeys.value = [];
+          ids.push(row.id);
+          names.push(row.name);
+        }
+        ids.push(...checkedRowKeys.value);
+        for (let index = 0; index < checkedRows.value.length; index++) {
+          names.push(checkedRows.value[index].name);
+        }
         dialog.warning({
           title: '删除警告',
-          content: '确定删除' + row.name + '?',
+          content: () => {
+            return h('lable', {}, [
+              '确定删除 ',
+              h('lable', { style: { color: '#8b5cf6', 'font-weight': 'bold' } }, names.join('、')),
+              ' ?',
+            ]);
+          },
           positiveText: '确定',
           negativeText: '取消',
           onPositiveClick: () => {
-            onUserDelete(row);
+            onUserDelete(ids);
           },
         });
       };
 
-      const onUserDelete = (row) => {
-        let ids = [...checkedRowKeys.value];
-        if (row.id) ids.push(row.id);
-        if (ids.length > 0 || row.id) {
+      const onUserDelete = (ids) => {
+        if (ids.length > 0) {
           userapi.deletes(ids).then((res) => {
             if (res.code == 0) {
               page();
@@ -259,6 +282,8 @@
         multipleSelectValue,
         seekSelect,
         checkedRowKeys,
+        checkedRows,
+        onUserDeleteTip,
         showModal,
         userData,
         rules,
