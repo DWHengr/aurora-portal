@@ -16,7 +16,7 @@
             v-model:value="multipleSelectValue"
             :seek-option="seekOption"
           />
-          <NButton type="primary" class="w-20"> 查找 </NButton>
+          <NButton type="primary" class="w-20" @click="page"> 查找 </NButton>
         </n-input-group>
         <div class="inline-block">
           <NButton type="primary" class="w-20 left-1" @click="showModal = true"> 新增 </NButton>
@@ -200,17 +200,19 @@
       });
 
       const page = (pagedata) => {
-        userapi.page({ page: pagedata ? pagedata : 1, size: pagination.pageSize }).then((res) => {
-          if (res.code == 0) {
-            data.value = res.data.dataList;
-            pagination.itemCount = res.data.total;
-            pagination.pageCount = Math.ceil(res.data.total / pagination.pageSize);
-          }
-        });
-      };
-
-      const seekChage = (e) => {
-        seekSelect.value.focus();
+        userapi
+          .page({
+            page: pagedata && typeof pagedata === 'number' ? pagedata : 1,
+            size: pagination.pageSize,
+            filters: multipleSelectValue.value,
+          })
+          .then((res) => {
+            if (res.code == 0) {
+              data.value = res.data.dataList;
+              pagination.itemCount = res.data.total;
+              pagination.pageCount = Math.ceil(res.data.total / pagination.pageSize);
+            }
+          });
       };
 
       const onUserCreate = () => {
@@ -274,6 +276,11 @@
         }
       };
 
+      const onSeek = () => {
+        // eslint-disable-next-line no-console
+        console.log(multipleSelectValue.value);
+      };
+
       return {
         seekOption: createSeekOptions(),
         columns,
@@ -288,10 +295,10 @@
         userData,
         rules,
         formRef,
-        seekChage,
         onUserCreate,
         onUserDelete,
         page,
+        onSeek,
         People20Filled,
         Add12Filled,
       };
