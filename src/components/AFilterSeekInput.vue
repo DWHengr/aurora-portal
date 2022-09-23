@@ -148,9 +148,17 @@
           });
         }
         //set props value
+        if (option?.map) {
+          for (let index = 0; index < option.map.length; index++) {
+            if (option.map[index].label == kv[1]) {
+              kv[1] = option.map[index].key;
+              break;
+            }
+          }
+        }
         for (index = 0; index < selectedVlaue.value.length; index++) {
           let vlaue = selectedVlaue.value[index];
-          if (vlaue.key === option?.key) {
+          if (vlaue.column === option?.key) {
             vlaue.value = kv[1];
             emit('update:value', selectedVlaue.value);
             break;
@@ -158,8 +166,8 @@
         }
         if (option && index >= selectedVlaue.value.length) {
           selectedVlaue.value.push({
-            key: option.key,
-            value: inputValue.value,
+            column: option.key,
+            value: kv[1],
           });
           emit('update:value', selectedVlaue.value);
         }
@@ -178,7 +186,7 @@
         //delete props value
         for (let index = 0; index < selectedVlaue.value.length; index++) {
           let vlaue = selectedVlaue.value[index];
-          if (vlaue.key === key) {
+          if (vlaue.column === key) {
             selectedVlaue.value.splice(index, 1);
             emit('update:value', selectedVlaue.value);
             break;
