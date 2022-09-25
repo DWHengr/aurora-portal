@@ -19,7 +19,17 @@
           <NButton type="primary" class="w-20" @click="page"> 查找 </NButton>
         </n-input-group>
         <div class="inline-block">
-          <NButton type="primary" class="w-20 left-1" @click="showModal = true"> 新增 </NButton>
+          <NButton
+            type="primary"
+            class="w-20 left-1"
+            @click="
+              () => {
+                (showModal = true), (is0EditAnd1Create = 1);
+              }
+            "
+          >
+            新增
+          </NButton>
         </div>
       </div>
       <div v-show="checkedRowKeys.length > 0">
@@ -49,8 +59,20 @@
     <n-modal v-model:show="showModal" class="w-[600px]" :mask-closable="false" preset="card">
       <template #header>
         <div class="model-header items-center">
-          <NIcon size="26" class="text-purple-800 mr-2" :component="Add12Filled" />
-          <div>新增告警用户</div>
+          <NIcon
+            v-if="is0EditAnd1Create == 1"
+            size="26"
+            class="text-purple-800 mr-2"
+            :component="Add12Filled"
+          />
+          <NIcon
+            v-if="is0EditAnd1Create == 0"
+            size="26"
+            class="text-purple-800 mr-2"
+            :component="Edit16Filled"
+          />
+          <div v-if="is0EditAnd1Create == 1">新增告警用户</div>
+          <div v-if="is0EditAnd1Create == 0">修改告警用户</div>
         </div>
       </template>
       <div class="mt-5">
@@ -81,7 +103,22 @@
       <template #action>
         <div class="flex justify-end w-full">
           <NButton class="w-20 m-1" @click="showModal = false"> 取消 </NButton>
-          <NButton type="primary" class="w-20 m-1" @click="onUserCreate"> 确定 </NButton>
+          <NButton
+            v-if="is0EditAnd1Create == 1"
+            type="primary"
+            class="w-20 m-1"
+            @click="onUserCreate"
+          >
+            确定
+          </NButton>
+          <NButton
+            v-if="is0EditAnd1Create == 0"
+            type="primary"
+            class="w-20 m-1"
+            @click="onUserEdit"
+          >
+            确定
+          </NButton>
         </div>
       </template>
     </n-modal>
@@ -90,8 +127,8 @@
 
 <script>
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
-  import { NButton } from 'naive-ui';
-  import { People20Filled, Add12Filled } from '@vicons/fluent';
+  import { NButton, NIcon } from 'naive-ui';
+  import { People20Filled, Add12Filled, Delete24Regular, Edit16Filled } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
@@ -158,6 +195,7 @@
       const pagination = reactive({
         pageSize: 10,
       });
+      const is0EditAnd1Create = ref(0);
       const columns = [
         {
           type: 'selection',
@@ -182,15 +220,38 @@
           title: '操作',
           key: 'actions',
           render(row) {
-            return h(
-              NButton,
-              {
-                type: 'error',
-                size: 'small',
-                onClick: () => onUserDeleteTip(row),
-              },
-              { default: () => '删除' }
-            );
+            return [
+              h(
+                NButton,
+                {
+                  type: 'primary',
+                  size: 'small',
+                  style: { margin: '2px' },
+                  onClick: () => {
+                    showModal.value = true;
+                    is0EditAnd1Create.value = 0;
+                    userData.value = { ...row };
+                  },
+                },
+                [
+                  h(NIcon, { component: Edit16Filled, size: 18, style: { marginRight: '2px' } }),
+                  '编辑',
+                ]
+              ),
+              h(
+                NButton,
+                {
+                  type: 'error',
+                  size: 'small',
+                  style: { margin: '2px' },
+                  onClick: () => onUserDeleteTip(row),
+                },
+                [
+                  h(NIcon, { component: Delete24Regular, size: 18, style: { marginRight: '2px' } }),
+                  '删除',
+                ]
+              ),
+            ];
           },
         },
       ];
@@ -224,14 +285,25 @@
                 formRef.value.restoreValidation();
                 userData.value = {};
                 showModal.value = false;
-                window.$message.success('添加成功', {
-                  duration: 0,
-                });
+                window.$message.success('添加成功');
               }
             });
           }
         });
       };
+
+      const onUserEdit = () => {
+        userapi.update(userData.value).then((res) => {
+          if (res.code == 0) {
+            page();
+            formRef.value.restoreValidation();
+            userData.value = {};
+            showModal.value = false;
+            window.$message.success('修改成功');
+          }
+        });
+      };
+
       const onUserDeleteTip = (row) => {
         // eslint-disable-next-line no-console
         console.log(checkedRows.value);
@@ -290,17 +362,21 @@
         seekSelect,
         checkedRowKeys,
         checkedRows,
-        onUserDeleteTip,
+        is0EditAnd1Create,
         showModal,
         userData,
         rules,
         formRef,
         onUserCreate,
+        onUserDeleteTip,
         onUserDelete,
         page,
         onSeek,
+        onUserEdit,
         People20Filled,
         Add12Filled,
+        Delete24Regular,
+        Edit16Filled,
       };
     },
   });
