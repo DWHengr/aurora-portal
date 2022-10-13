@@ -24,7 +24,7 @@
             class="w-20 left-1"
             @click="
               () => {
-                (showModal = true), (is0EditAnd1Create = 1);
+                (showModal = true), (is0EditAnd1Create = 1), (silenceData = {});
               }
             "
           >
@@ -78,7 +78,7 @@
       <div class="mt-5">
         <n-form
           ref="formRef"
-          :model="slienceData"
+          :model="silenceData"
           :rules="rules"
           :label-width="60"
           label-placement="left"
@@ -87,27 +87,27 @@
           }"
         >
           <n-form-item label="静默名称:" path="name">
-            <n-input class="w-9" v-model:value="slienceData.name" placeholder="请输入静默名称" />
+            <n-input class="w-9" v-model:value="silenceData.name" placeholder="请输入静默名称" />
           </n-form-item>
           <n-form-item label="静默类型:" path="type">
-            <n-input class="w-9" v-model:value="slienceData.type" placeholder="请输入静默类型" />
+            <n-input class="w-9" v-model:value="silenceData.type" placeholder="请输入静默类型" />
           </n-form-item>
           <n-form-item label="静默开始时间:" path="email">
             <n-input
               class="w-9"
-              v-model:value="slienceData.start_time"
+              v-model:value="silenceData.startTime"
               placeholder="请输入静默开始时间"
             />
           </n-form-item>
           <n-form-item label="静默结束时间:" path="phone">
             <n-input
               class="w-9"
-              v-model:value="slienceData.end_time"
+              v-model:value="silenceData.endTime"
               placeholder="请输入静默结束时间"
             />
           </n-form-item>
           <n-form-item label="备注:" path="phone">
-            <n-input class="w-9" v-model:value="slienceData.description" placeholder="请输入备注" />
+            <n-input class="w-9" v-model:value="silenceData.description" placeholder="请输入备注" />
           </n-form-item>
         </n-form>
       </div>
@@ -206,11 +206,11 @@
         },
         {
           title: '静默开始时间',
-          key: 'start_time',
+          key: 'startTime',
         },
         {
           title: '静默结束时间',
-          key: 'end_time',
+          key: 'endTime',
         },
         {
           title: '备注',
@@ -233,7 +233,7 @@
                     silenceData.value = { ...row };
                   },
                 },
-                [
+                () => [
                   h(NIcon, { component: Edit16Filled, size: 18, style: { marginRight: '2px' } }),
                   '编辑',
                 ]
@@ -246,7 +246,7 @@
                   style: { margin: '2px' },
                   onClick: () => onSilenceDeleteTip(row),
                 },
-                [
+                () => [
                   h(NIcon, { component: Delete24Regular, size: 18, style: { marginRight: '2px' } }),
                   '删除',
                 ]

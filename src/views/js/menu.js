@@ -28,6 +28,11 @@ export const menus = [
         key: 'record',
         icon: renderIcon(DocumentError20Filled),
       },
+      {
+        label: '告警静默',
+        key: 'silence',
+        icon: renderIcon(DocumentError20Filled),
+      },
     ],
   },
   {

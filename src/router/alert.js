@@ -35,5 +35,15 @@ export default {
       },
       component: () => import('@/views/alert/alert_record/AlertRecord.vue'),
     },
+    {
+      path: 'silence',
+      name: 'silence',
+      meta: {
+        title: '告警静默',
+        parentName: '告警管理',
+        path: '/silence',
+      },
+      component: () => import('@/views/alert/alert_silence/AlertSilence.vue'),
+    },
   ],
 };
