@@ -24,7 +24,7 @@
             class="w-20 left-1"
             @click="
               () => {
-                (showModal = true), (is0EditAnd1Create = 1);
+                (showModal = true), (is0EditAnd1Create = 1), (userData = {});
               }
             "
           >
@@ -233,7 +233,7 @@
                     userData.value = { ...row };
                   },
                 },
-                [
+                () => [
                   h(NIcon, { component: Edit16Filled, size: 18, style: { marginRight: '2px' } }),
                   '编辑',
                 ]
@@ -246,7 +246,7 @@
                   style: { margin: '2px' },
                   onClick: () => onUserDeleteTip(row),
                 },
-                [
+                () => [
                   h(NIcon, { component: Delete24Regular, size: 18, style: { marginRight: '2px' } }),
                   '删除',
                 ]
