@@ -1,5 +1,5 @@
 <template>
-  <NConfigProvider :theme-overrides="ThemeOverrides">
+  <NConfigProvider :theme-overrides="ThemeOverrides" :locale="zhCN" :date-locale="dateZhCN">
     <NMessageProvider>
       <NDialogProvider>
         <RouterView />
@@ -9,6 +9,7 @@
 </template>
 
 <script setup>
+  import { zhCN, dateZhCN } from 'naive-ui';
   const ThemeOverrides = {
     common: {
       primaryColor: '#8b5cf6',

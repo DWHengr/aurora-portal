@@ -24,7 +24,7 @@
             class="w-20 left-1"
             @click="
               () => {
-                (showModal = true), (is0EditAnd1Create = 1), (silenceData = {});
+                (showModal = true), (is0EditAnd1Create = 1), (silenceData = { type: 'block' });
               }
             "
           >
@@ -90,23 +90,53 @@
             <n-input class="w-9" v-model:value="silenceData.name" placeholder="请输入静默名称" />
           </n-form-item>
           <n-form-item label="静默类型:" path="type">
-            <n-input class="w-9" v-model:value="silenceData.type" placeholder="请输入静默类型" />
+            <n-select
+              v-model:value="silenceData.type"
+              placeholder="请输入静默类型"
+              :options="silenceTypeOptions"
+            />
           </n-form-item>
-          <n-form-item label="静默开始时间:" path="email">
-            <n-input
-              class="w-9"
+          <n-form-item label="静默开始时间:" path="startTime">
+            <n-date-picker
+              v-if="silenceData.type == 'block'"
+              class="w-full"
               v-model:value="silenceData.startTime"
               placeholder="请输入静默开始时间"
+              format="yyyy/MM/dd HH:mm:ss"
+              type="datetime"
+              clearable
             />
+            <n-date-picker
+              v-if="silenceData.type == 'everyday'"
+              class="w-full"
+              v-model:value="silenceData.startTime"
+              placeholder="请输入静默开始时间"
+              type="date"
+              clearable
+            />
+            <n-input v-if="silenceData.type == 'offday'" placeholder="周六" disabled />
           </n-form-item>
-          <n-form-item label="静默结束时间:" path="phone">
-            <n-input
-              class="w-9"
+          <n-form-item label="静默结束时间:" path="endTime">
+            <n-date-picker
+              v-if="silenceData.type == 'block'"
+              class="w-full"
               v-model:value="silenceData.endTime"
               placeholder="请输入静默结束时间"
+              format="yyyy/MM/dd HH:mm:ss"
+              type="datetime"
+              clearable
             />
+            <n-date-picker
+              v-if="silenceData.type == 'everyday'"
+              class="w-full"
+              v-model:value="silenceData.endTime"
+              placeholder="请输入静默结束时间"
+              type="date"
+              clearable
+            />
+            <n-input v-if="silenceData.type == 'offday'" placeholder="周日" disabled />
           </n-form-item>
-          <n-form-item label="备注:" path="phone">
+          <n-form-item label="备注:" path="description">
             <n-input class="w-9" v-model:value="silenceData.description" placeholder="请输入备注" />
           </n-form-item>
         </n-form>
@@ -164,6 +194,21 @@
     ];
   };
 
+  const silenceTypeOptions = [
+    {
+      label: '时间段',
+      value: 'block',
+    },
+    {
+      label: '每天',
+      value: 'everyday',
+    },
+    {
+      label: '休息日',
+      value: 'offday',
+    },
+  ];
+
   const rules = {
     name: {
       required: true,
@@ -171,11 +216,9 @@
       trigger: ['input', 'blur'],
     },
     type: {
-      trigger: ['input'],
+      required: true,
+      trigger: ['blur', 'change'],
       message: '请选择静默类型',
-      validator: (rule, value) => {
-        if (value) return /^1[345678]\d{9}$/.test(value);
-      },
     },
   };
 
@@ -191,7 +234,10 @@
       const checkedRows = ref([]);
       const data = ref([]);
       const showModal = ref(false);
-      const silenceData = ref({});
+      const silenceData = ref({
+        name: '',
+        type: '',
+      });
       const formRef = ref(null);
       const pagination = reactive({
         pageSize: 10,
@@ -369,8 +415,6 @@
       };
 
       const onSilenceDeleteTip = (row) => {
-        // eslint-disable-next-line no-console
-        console.log(checkedRows.value);
         let ids = [];
         let names = [];
         if (row.id) {
@@ -431,6 +475,7 @@
         silenceData,
         rules,
         formRef,
+        silenceTypeOptions,
         onSilenceCreate,
         onSilenceDeleteTip,
         onSilenceDelete,
