@@ -2,7 +2,7 @@
   <div>
     <ACard :bordered="false">
       <div class="mb-4">
-        <n-icon :component="People20Filled" class="text-purple-800 align-middle" size="38" />
+        <n-icon :component="TabProhibited24Filled" class="text-purple-800 align-middle" size="38" />
         <h1 class="inline-block ml-2 align-middle" style="font-size: 18px">告警静默</h1>
       </div>
       <p> 设置告警静默信息</p>
@@ -80,7 +80,7 @@
           ref="formRef"
           :model="silenceData"
           :rules="rules"
-          :label-width="60"
+          :label-width="100"
           label-placement="left"
           :style="{
             maxWidth: '780px',
@@ -138,8 +138,13 @@
 
 <script>
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
-  import { NButton, NIcon } from 'naive-ui';
-  import { People20Filled, Add12Filled, Delete24Regular, Edit16Filled } from '@vicons/fluent';
+  import { NButton, NIcon, NTag } from 'naive-ui';
+  import {
+    TabProhibited24Filled,
+    Add12Filled,
+    Delete24Regular,
+    Edit16Filled,
+  } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
@@ -203,14 +208,73 @@
         {
           title: '静默类型',
           key: 'type',
+          render(row) {
+            return h(
+              NTag,
+              {
+                type: 'info',
+                bordered: false,
+              },
+              {
+                default: () => {
+                  switch (row.type) {
+                    case 'everyday':
+                      return '每天';
+                    case 'block':
+                      return '时间段';
+                    case 'offday':
+                      return '休息日';
+                  }
+                },
+              }
+            );
+          },
         },
         {
           title: '静默开始时间',
           key: 'startTime',
+          render(row) {
+            return h(
+              'div',
+              {},
+              {
+                default: () => {
+                  let data = new Date(row.startTime);
+                  switch (row.type) {
+                    case 'everyday':
+                      return data.toLocaleTimeString();
+                    case 'block':
+                      return data.toLocaleString();
+                    case 'offday':
+                      return '周六';
+                  }
+                },
+              }
+            );
+          },
         },
         {
           title: '静默结束时间',
           key: 'endTime',
+          render(row) {
+            return h(
+              'div',
+              {},
+              {
+                default: () => {
+                  let data = new Date(row.endTime);
+                  switch (row.type) {
+                    case 'everyday':
+                      return data.toLocaleTimeString();
+                    case 'block':
+                      return data.toLocaleString();
+                    case 'offday':
+                      return '周日';
+                  }
+                },
+              }
+            );
+          },
         },
         {
           title: '备注',
@@ -373,7 +437,7 @@
         page,
         onSeek,
         onSilenceEdit,
-        People20Filled,
+        TabProhibited24Filled,
         Add12Filled,
         Delete24Regular,
         Edit16Filled,

@@ -6,6 +6,7 @@ import {
   Settings20Filled,
   ClockAlarm20Filled,
   People20Filled,
+  TabProhibited24Filled,
 } from '@vicons/fluent';
 
 function renderIcon(icon) {
@@ -31,7 +32,7 @@ export const menus = [
       {
         label: '告警静默',
         key: 'silence',
-        icon: renderIcon(DocumentError20Filled),
+        icon: renderIcon(TabProhibited24Filled),
       },
     ],
   },

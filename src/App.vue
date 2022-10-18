@@ -22,6 +22,10 @@
     Message: {
       iconColorSuccess: '#6d28d9',
     },
+    Tag: {
+      colorInfo: '#ddd6fe',
+      textColorInfo: '#6d28d9',
+    },
     Dialog: {
       iconColorWarning: '#6d28d9',
       peers: {
