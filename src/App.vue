@@ -1,6 +1,6 @@
 <template>
   <NConfigProvider :theme-overrides="ThemeOverrides" :locale="zhCN" :date-locale="dateZhCN">
-    <NMessageProvider>
+    <NMessageProvider class="bg-purple-50">
       <NDialogProvider>
         <RouterView />
       </NDialogProvider>
@@ -41,6 +41,9 @@
           borderFocusWarning: '#8b5cf6',
         },
       },
+    },
+    DataTable: {
+      tdColorHover: '#e5e0ff',
     },
   };
 </script>

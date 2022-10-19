@@ -7,55 +7,137 @@
       </div>
       <p> 设置告警通知的用户信息</p>
     </ACard>
-    <ACard class="mt-[15px]" :gradual="false">
-      <!-- 操作栏 -->
-      <div v-show="checkedRowKeys.length <= 0">
-        <n-input-group class="w-[calc(100%-5.25rem)]">
-          <AFilterSeekInput
-            class="w-full"
-            v-model:value="multipleSelectValue"
-            :seek-option="seekOption"
-          />
-          <NButton type="primary" class="w-20" @click="page"> 查找 </NButton>
-        </n-input-group>
-        <div class="inline-block">
-          <NButton
-            type="primary"
-            class="w-20 left-1"
-            @click="
-              () => {
-                (showModal = true), (is0EditAnd1Create = 1), (userData = {});
-              }
-            "
-          >
-            新增
-          </NButton>
-        </div>
-      </div>
-      <div v-show="checkedRowKeys.length > 0">
-        <div class="inline-block">
-          <NButton type="error" class="w-20" @click="onUserDeleteTip"> 删除 </NButton>
-        </div>
-      </div>
-      <!-- 数据表格 -->
-      <div class="mt-[10px]">
-        <n-data-table
-          remote
-          :row-key="(row) => row.id"
-          v-model:checked-row-keys="checkedRowKeys"
-          :on-update:checked-row-keys="
-            (keys, rows) => {
-              checkedRowKeys = keys;
-              checkedRows = rows;
-            }
-          "
-          :columns="columns"
-          :data="data"
-          :pagination="pagination"
-          :on-update:page="page"
-        />
-      </div>
-    </ACard>
+    <n-layout class="mt-[15px] bg-transparent">
+      <n-layout class="bg-transparent" has-sider>
+        <n-layout-sider width="450" class="bg-transparent">
+          <div class="font-bold text-[15px] mb-10px">告警通知组</div>
+          <ACard :gradual="false">
+            <div class="overflow-hidden h-650px">
+              <div>
+                <n-input-group class="w-330px">
+                  <AFilterSeekInput
+                    class="w-270px"
+                    v-model:value="multipleSelectValue"
+                    :seek-option="seekOption"
+                  />
+                  <NButton type="primary" class="w-15" @click="page"> 查找 </NButton>
+                </n-input-group>
+                <NButton
+                  type="primary"
+                  class="w-15 ml-3px"
+                  @click="
+                    () => {
+                      (showModal = true), (is0EditAnd1Create = 1), (userData = {});
+                    }
+                  "
+                >
+                  新增
+                </NButton>
+              </div>
+              <n-scrollbar>
+                <div class="mt-16px">
+                  <n-collapse accordion>
+                    <n-collapse-item class="n-collapse-item align-middle" title="组1" name="1">
+                      <template #header-extra>
+                        <NButton quaternary circle type="primary">
+                          <template #icon>
+                            <NIcon class="text-25px" :component="MoreVertical20Filled" />
+                          </template>
+                        </NButton>
+                      </template>
+                      <div class="h-32px flex items-center">
+                        <div>
+                          <p class="inline-block">用户1</p>
+                          <NButton class="inline-block absolute right-1" size="small">移除</NButton>
+                        </div>
+                      </div>
+                      <div class="h-32px flex items-center">
+                        <div>
+                          <p class="inline-block">用户2</p>
+                          <NButton class="inline-block absolute right-1" size="small">移除</NButton>
+                        </div>
+                      </div>
+                    </n-collapse-item>
+                    <n-collapse-item class="n-collapse-item align-middle" title="组2" name="2">
+                      <template #header-extra>
+                        <NButton quaternary circle type="primary">
+                          <template #icon>
+                            <NIcon class="text-25px" :component="MoreVertical20Filled" />
+                          </template>
+                        </NButton>
+                      </template>
+                      <div>可以</div>
+                    </n-collapse-item>
+                    <n-collapse-item class="n-collapse-item align-middle" title="组3" name="3">
+                      <template #header-extra>
+                        <NButton quaternary circle type="primary">
+                          <template #icon>
+                            <NIcon class="text-25px" :component="MoreVertical20Filled" />
+                          </template>
+                        </NButton>
+                      </template>
+                      <div>可以</div>
+                    </n-collapse-item>
+                  </n-collapse>
+                </div>
+              </n-scrollbar>
+            </div>
+          </ACard>
+        </n-layout-sider>
+        <n-layout-content class="bg-transparent">
+          <div class="ml-[10px] font-bold text-[15px] mb-10px">告警通用户</div>
+          <ACard class="ml-[10px]" :gradual="false">
+            <!-- 操作栏 -->
+            <div v-show="checkedRowKeys.length <= 0">
+              <n-input-group class="w-[calc(100%-5.25rem)]">
+                <AFilterSeekInput
+                  class="w-full"
+                  v-model:value="multipleSelectValue"
+                  :seek-option="seekOption"
+                />
+                <NButton type="primary" class="w-20" @click="page"> 查找 </NButton>
+              </n-input-group>
+              <div class="inline-block">
+                <NButton
+                  type="primary"
+                  class="w-20 left-1"
+                  @click="
+                    () => {
+                      (showModal = true), (is0EditAnd1Create = 1), (userData = {});
+                    }
+                  "
+                >
+                  新增
+                </NButton>
+              </div>
+            </div>
+            <div v-show="checkedRowKeys.length > 0">
+              <div class="inline-block">
+                <NButton type="error" class="w-20" @click="onUserDeleteTip"> 删除 </NButton>
+              </div>
+            </div>
+            <!-- 数据表格 -->
+            <div class="mt-[10px]">
+              <n-data-table
+                remote
+                :row-key="(row) => row.id"
+                v-model:checked-row-keys="checkedRowKeys"
+                :on-update:checked-row-keys="
+                  (keys, rows) => {
+                    checkedRowKeys = keys;
+                    checkedRows = rows;
+                  }
+                "
+                :columns="columns"
+                :data="data"
+                :pagination="pagination"
+                :on-update:page="page"
+              />
+            </div>
+          </ACard>
+        </n-layout-content>
+      </n-layout>
+    </n-layout>
     <n-modal v-model:show="showModal" class="w-[600px]" :mask-closable="false" preset="card">
       <template #header>
         <div class="model-header items-center">
@@ -128,7 +210,13 @@
 <script>
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
   import { NButton, NIcon } from 'naive-ui';
-  import { People20Filled, Add12Filled, Delete24Regular, Edit16Filled } from '@vicons/fluent';
+  import {
+    People20Filled,
+    MoreVertical20Filled,
+    Add12Filled,
+    Delete24Regular,
+    Edit16Filled,
+  } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
@@ -377,6 +465,7 @@
         Add12Filled,
         Delete24Regular,
         Edit16Filled,
+        MoreVertical20Filled,
       };
     },
   });
@@ -388,5 +477,11 @@
     color: black;
     font-size: 20px;
     background: linear-gradient(to right, white, #c4b5fd);
+  }
+  .n-collapse-item__header-main {
+    height: 30px;
+  }
+  .n-collapse-item__header-main:hover {
+    background-color: #e5e0ff;
   }
 </style>
