@@ -69,6 +69,7 @@ import {
   NDynamicInput,
   NCollapse,
   NCollapseItem,
+  NEllipsis,
 } from 'naive-ui';
 
 const naive = create({
@@ -142,6 +143,7 @@ const naive = create({
     NDynamicInput,
     NCollapse,
     NCollapseItem,
+    NEllipsis,
   ],
 });
 

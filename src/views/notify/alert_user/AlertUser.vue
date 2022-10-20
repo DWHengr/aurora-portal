@@ -17,17 +17,17 @@
                 <n-input-group class="w-330px">
                   <AFilterSeekInput
                     class="w-270px"
-                    v-model:value="multipleSelectValue"
-                    :seek-option="seekOption"
+                    v-model:value="multipleGroupSelectValue"
+                    :seek-option="seekGroupOption"
                   />
-                  <NButton type="primary" class="w-15" @click="page"> 查找 </NButton>
+                  <NButton type="primary" class="w-15" @click="pageUserGroup"> 查找 </NButton>
                 </n-input-group>
                 <NButton
                   type="primary"
                   class="w-15 ml-3px"
                   @click="
                     () => {
-                      (showModal = true), (is0EditAnd1Create = 1), (userData = {});
+                      (showUserGroupModal = true), (is0EditAnd1Create = 1), (userGroupData = {});
                     }
                   "
                 >
@@ -37,6 +37,44 @@
               <n-scrollbar>
                 <div class="mt-16px">
                   <n-collapse accordion>
+                    <n-collapse-item
+                      v-for="item in dataUserGroup"
+                      :key="item.id"
+                      class="n-collapse-item align-middle"
+                      :title="item.name"
+                      :name="item.id"
+                    >
+                      <template #header-extra>
+                        <NButton quaternary circle type="primary">
+                          <template #icon>
+                            <NIcon class="text-25px" :component="MoreVertical20Filled" />
+                          </template>
+                        </NButton>
+                      </template>
+                      <n-ellipsis
+                        :line-clamp="2"
+                        class="max-w-380px leading-16px text-gray-400 text-13px"
+                      >
+                        {{ item.description }}
+                        <template #tooltip>
+                          <div style="text-align: center; max-width: 300px">
+                            {{ item.description }}
+                          </div>
+                        </template>
+                      </n-ellipsis>
+                      <div class="group-user-item">
+                        <div>
+                          <p class="inline-block leading-28px ml-1">用户1</p>
+                          <NButton class="absolute right-1" size="small">移除</NButton>
+                        </div>
+                      </div>
+                      <div class="group-user-item h-38px flex items-center">
+                        <div>
+                          <p class="inline-block">用户2</p>
+                          <NButton class="inline-block absolute right-1" size="small">移除</NButton>
+                        </div>
+                      </div>
+                    </n-collapse-item>
                     <n-collapse-item class="n-collapse-item align-middle" title="组1" name="1">
                       <template #header-extra>
                         <NButton quaternary circle type="primary">
@@ -45,38 +83,29 @@
                           </template>
                         </NButton>
                       </template>
-                      <div class="h-32px flex items-center">
+                      <n-ellipsis
+                        :line-clamp="2"
+                        class="max-w-380px leading-16px text-gray-400 text-13px"
+                      >
+                        描述,述,述,述,述,述,述,述述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,,述,,述,述,述,述,述,述,述,述,述,述述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,
+                        <template #tooltip>
+                          <div style="text-align: center; max-width: 300px">
+                            描述,述,述,述,述,述,述,述述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,,述,,述,述,述,述,述,述,述,述,述,述述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,
+                          </div>
+                        </template>
+                      </n-ellipsis>
+                      <div class="group-user-item">
                         <div>
-                          <p class="inline-block">用户1</p>
-                          <NButton class="inline-block absolute right-1" size="small">移除</NButton>
+                          <p class="inline-block leading-28px ml-1">用户1</p>
+                          <NButton class="absolute right-1" size="small">移除</NButton>
                         </div>
                       </div>
-                      <div class="h-32px flex items-center">
+                      <div class="group-user-item h-38px flex items-center">
                         <div>
                           <p class="inline-block">用户2</p>
                           <NButton class="inline-block absolute right-1" size="small">移除</NButton>
                         </div>
                       </div>
-                    </n-collapse-item>
-                    <n-collapse-item class="n-collapse-item align-middle" title="组2" name="2">
-                      <template #header-extra>
-                        <NButton quaternary circle type="primary">
-                          <template #icon>
-                            <NIcon class="text-25px" :component="MoreVertical20Filled" />
-                          </template>
-                        </NButton>
-                      </template>
-                      <div>可以</div>
-                    </n-collapse-item>
-                    <n-collapse-item class="n-collapse-item align-middle" title="组3" name="3">
-                      <template #header-extra>
-                        <NButton quaternary circle type="primary">
-                          <template #icon>
-                            <NIcon class="text-25px" :component="MoreVertical20Filled" />
-                          </template>
-                        </NButton>
-                      </template>
-                      <div>可以</div>
                     </n-collapse-item>
                   </n-collapse>
                 </div>
@@ -103,7 +132,7 @@
                   class="w-20 left-1"
                   @click="
                     () => {
-                      (showModal = true), (is0EditAnd1Create = 1), (userData = {});
+                      (showUserModal = true), (is0EditAnd1Create = 1), (userData = {});
                     }
                   "
                 >
@@ -138,7 +167,7 @@
         </n-layout-content>
       </n-layout>
     </n-layout>
-    <n-modal v-model:show="showModal" class="w-[600px]" :mask-closable="false" preset="card">
+    <n-modal v-model:show="showUserModal" class="w-[600px]" :mask-closable="false" preset="card">
       <template #header>
         <div class="model-header items-center">
           <NIcon
@@ -184,12 +213,81 @@
       </div>
       <template #action>
         <div class="flex justify-end w-full">
-          <NButton class="w-20 m-1" @click="showModal = false"> 取消 </NButton>
+          <NButton class="w-20 m-1" @click="showUserModal = false"> 取消 </NButton>
           <NButton
             v-if="is0EditAnd1Create == 1"
             type="primary"
             class="w-20 m-1"
             @click="onUserCreate"
+          >
+            确定
+          </NButton>
+          <NButton
+            v-if="is0EditAnd1Create == 0"
+            type="primary"
+            class="w-20 m-1"
+            @click="onUserEdit"
+          >
+            确定
+          </NButton>
+        </div>
+      </template>
+    </n-modal>
+    <n-modal
+      v-model:show="showUserGroupModal"
+      class="w-[600px]"
+      :mask-closable="false"
+      preset="card"
+    >
+      <template #header>
+        <div class="model-header items-center">
+          <NIcon
+            v-if="is0EditAnd1Create == 1"
+            size="26"
+            class="text-purple-800 mr-2"
+            :component="Add12Filled"
+          />
+          <NIcon
+            v-if="is0EditAnd1Create == 0"
+            size="26"
+            class="text-purple-800 mr-2"
+            :component="Edit16Filled"
+          />
+          <div v-if="is0EditAnd1Create == 1">新增告警用户组</div>
+          <div v-if="is0EditAnd1Create == 0">修改告警用户组</div>
+        </div>
+      </template>
+      <div class="mt-5">
+        <n-form
+          ref="formGroupRef"
+          :model="userGroupData"
+          :rules="groupRules"
+          :label-width="100"
+          label-placement="left"
+          :style="{
+            maxWidth: '780px',
+          }"
+        >
+          <n-form-item label="组名称:" path="name">
+            <n-input class="w-9" v-model:value="userGroupData.name" placeholder="请输入组名称" />
+          </n-form-item>
+          <n-form-item label="备注:" path="department">
+            <n-input
+              class="w-9"
+              v-model:value="userGroupData.description"
+              placeholder="请输入备注"
+            />
+          </n-form-item>
+        </n-form>
+      </div>
+      <template #action>
+        <div class="flex justify-end w-full">
+          <NButton class="w-20 m-1" @click="showUserGroupModal = false"> 取消 </NButton>
+          <NButton
+            v-if="is0EditAnd1Create == 1"
+            type="primary"
+            class="w-20 m-1"
+            @click="onUserGroupCreate"
           >
             确定
           </NButton>
@@ -221,28 +319,34 @@
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
   import userapi from '@/api/user.js';
+  import usergroupapi from '@/api/userGroup.js';
   import { useDialog } from 'naive-ui';
 
-  const createSeekOptions = () => {
-    return [
-      {
-        label: '姓名',
-        key: 'name',
-      },
-      {
-        label: '部门',
-        key: 'department',
-      },
-      {
-        label: '邮箱',
-        key: 'email',
-      },
-      {
-        label: '手机',
-        key: 'phone',
-      },
-    ];
-  };
+  const seekOption = [
+    {
+      label: '姓名',
+      key: 'name',
+    },
+    {
+      label: '部门',
+      key: 'department',
+    },
+    {
+      label: '邮箱',
+      key: 'email',
+    },
+    {
+      label: '手机',
+      key: 'phone',
+    },
+  ];
+
+  const seekGroupOption = [
+    {
+      label: '组名称',
+      key: 'name',
+    },
+  ];
 
   const rules = {
     name: {
@@ -266,20 +370,33 @@
     },
   };
 
+  const groupRules = {
+    name: {
+      required: true,
+      message: '请输入组名称',
+      trigger: ['input', 'blur'],
+    },
+  };
+
   export default defineComponent({
     name: 'AlertUser',
     components: { AFilterSeekInput, ACard },
     setup() {
       const dialog = useDialog();
       const multipleSelectValue = ref([]);
+      const multipleGroupSelectValue = ref([]);
       const seekSelect = ref(null);
       const router = useRouter();
       const checkedRowKeys = ref([]);
       const checkedRows = ref([]);
       const data = ref([]);
-      const showModal = ref(false);
+      const dataUserGroup = ref([]);
+      const showUserModal = ref(false);
       const userData = ref({});
+      const userGroupData = ref({});
       const formRef = ref(null);
+      const formGroupRef = ref(null);
+      const showUserGroupModal = ref(false);
       const pagination = reactive({
         pageSize: 10,
       });
@@ -316,7 +433,7 @@
                   size: 'small',
                   style: { margin: '2px' },
                   onClick: () => {
-                    showModal.value = true;
+                    showUserModal.value = true;
                     is0EditAnd1Create.value = 0;
                     userData.value = { ...row };
                   },
@@ -346,7 +463,24 @@
 
       onMounted(() => {
         page();
+        pageUserGroup();
       });
+
+      const pageUserGroup = () => {
+        usergroupapi
+          .page({
+            page: 1,
+            size: 999,
+            filters: multipleGroupSelectValue.value,
+          })
+          .then((res) => {
+            if (res.code == 0) {
+              dataUserGroup.value = res.data.dataList;
+              // eslint-disable-next-line no-console
+              console.log(dataUserGroup.value);
+            }
+          });
+      };
 
       const page = (pagedata) => {
         userapi
@@ -372,7 +506,23 @@
                 page();
                 formRef.value.restoreValidation();
                 userData.value = {};
-                showModal.value = false;
+                showUserModal.value = false;
+                window.$message.success('添加成功');
+              }
+            });
+          }
+        });
+      };
+
+      const onUserGroupCreate = () => {
+        formGroupRef.value?.validate((errors) => {
+          if (!errors) {
+            usergroupapi.create(userGroupData.value).then((res) => {
+              if (res.code == 0) {
+                pageUserGroup();
+                formGroupRef.value.restoreValidation();
+                userGroupData.value = {};
+                showUserGroupModal.value = false;
                 window.$message.success('添加成功');
               }
             });
@@ -386,7 +536,7 @@
             page();
             formRef.value.restoreValidation();
             userData.value = {};
-            showModal.value = false;
+            showUserModal.value = false;
             window.$message.success('修改成功');
           }
         });
@@ -442,25 +592,34 @@
       };
 
       return {
-        seekOption: createSeekOptions(),
+        seekOption,
+        seekGroupOption,
         columns,
         data,
         pagination,
         multipleSelectValue,
+        multipleGroupSelectValue,
         seekSelect,
         checkedRowKeys,
         checkedRows,
         is0EditAnd1Create,
-        showModal,
+        showUserModal,
         userData,
         rules,
         formRef,
+        showUserGroupModal,
+        userGroupData,
+        formGroupRef,
+        groupRules,
+        dataUserGroup,
         onUserCreate,
         onUserDeleteTip,
         onUserDelete,
         page,
         onSeek,
         onUserEdit,
+        onUserGroupCreate,
+        pageUserGroup,
         People20Filled,
         Add12Filled,
         Delete24Regular,
@@ -482,6 +641,16 @@
     height: 30px;
   }
   .n-collapse-item__header-main:hover {
+    border-radius: 5px;
+    background-color: #e5e0ff;
+  }
+  .group-user-item {
+    display: flex;
+    height: 38px;
+    align-items: center;
+  }
+  .group-user-item:hover {
+    border-radius: 5px;
     background-color: #e5e0ff;
   }
 </style>
