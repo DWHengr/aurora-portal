@@ -70,6 +70,7 @@ import {
   NCollapse,
   NCollapseItem,
   NEllipsis,
+  NTransfer,
 } from 'naive-ui';
 
 const naive = create({
@@ -144,6 +145,7 @@ const naive = create({
     NCollapse,
     NCollapseItem,
     NEllipsis,
+    NTransfer,
   ],
 });
 

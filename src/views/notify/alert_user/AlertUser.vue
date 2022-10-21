@@ -12,7 +12,7 @@
         <n-layout-sider width="450" class="bg-transparent">
           <div class="font-bold text-[15px] mb-10px">告警通知组</div>
           <ACard :gradual="false">
-            <div class="overflow-hidden h-650px">
+            <div class="overflow-hidden h-680px">
               <div>
                 <n-input-group class="w-330px">
                   <AFilterSeekInput
@@ -59,8 +59,9 @@
                         </n-dropdown>
                       </template>
                       <n-ellipsis
+                        v-if="item.description"
                         :line-clamp="2"
-                        class="max-w-380px leading-16px text-gray-400 text-13px"
+                        class="max-w-380px leading-16px ml-1 text-gray-400 text-13px"
                       >
                         {{ item.description }}
                         <template #tooltip>
@@ -69,16 +70,14 @@
                           </div>
                         </template>
                       </n-ellipsis>
-                      <div class="group-user-item">
+                      <div
+                        v-for="user in item.userIdsDetail"
+                        class="group-user-item"
+                        :key="user.id"
+                      >
                         <div>
-                          <p class="inline-block leading-28px ml-1">用户1</p>
+                          <p class="inline-block leading-28px ml-1">{{ user.name }}</p>
                           <NButton class="absolute right-1" size="small">移除</NButton>
-                        </div>
-                      </div>
-                      <div class="group-user-item h-38px flex items-center">
-                        <div>
-                          <p class="inline-block">用户2</p>
-                          <NButton class="inline-block absolute right-1" size="small">移除</NButton>
                         </div>
                       </div>
                     </n-collapse-item>
@@ -277,6 +276,36 @@
         </div>
       </template>
     </n-modal>
+    <n-modal
+      v-model:show="showGroupAddUserModal"
+      class="w-[700px]"
+      :mask-closable="false"
+      preset="card"
+    >
+      <template #header>
+        <div class="model-header items-center">
+          <NIcon size="26" class="text-purple-800 mr-2" :component="Add12Filled" />
+          <div>添加用户</div>
+        </div>
+      </template>
+      <div class="mt-5">
+        <n-transfer
+          class="h-410px"
+          ref="transfer"
+          v-model:value="addUserValues"
+          virtual-scroll
+          :options="allUserOption"
+          source-filterable
+          target-filterable
+        />
+      </div>
+      <template #action>
+        <div class="flex justify-end w-full">
+          <NButton class="w-20 m-1" @click="showGroupAddUserModal = false"> 取消 </NButton>
+          <NButton type="primary" class="w-20 m-1" @click="onGroupAddUser"> 确定 </NButton>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
@@ -382,13 +411,16 @@
       const data = ref([]);
       const dataUserGroup = ref([]);
       const showUserModal = ref(false);
+      const showGroupAddUserModal = ref(false);
       const userData = ref({});
       const userGroupData = ref({});
       const formRef = ref(null);
       const formGroupRef = ref(null);
       const showUserGroupModal = ref(false);
+      const allUserOption = ref([]);
+      const addUserValues = ref([]);
       const pagination = reactive({
-        pageSize: 10,
+        pageSize: 9,
       });
       const is0EditAnd1Create = ref(0);
       const columns = [
@@ -466,8 +498,6 @@
           .then((res) => {
             if (res.code == 0) {
               dataUserGroup.value = res.data.dataList;
-              // eslint-disable-next-line no-console
-              console.log(dataUserGroup.value);
             }
           });
       };
@@ -502,6 +532,7 @@
             });
           }
         });
+        allUserOption.value = [];
       };
 
       const onUserGroupCreate = () => {
@@ -530,6 +561,7 @@
             window.$message.success('修改成功');
           }
         });
+        allUserOption.value = [];
       };
 
       const onUserDeleteTip = (row) => {
@@ -583,6 +615,24 @@
         if (key == 'delete') {
           onUserGroupDeleteTip(item);
         }
+        if (key == 'addUser') {
+          userGroupData.value.id = item.id;
+          showGroupAddUserModal.value = true;
+          if (allUserOption.value?.length <= 0) {
+            userapi.all().then((res) => {
+              if (res.code == 0) {
+                let datas = res.data;
+                for (let index = 0; index < datas?.length; index++) {
+                  allUserOption.value.push({
+                    label: datas[index].name,
+                    value: datas[index].id,
+                  });
+                }
+              }
+            });
+          }
+          addUserValues.value = item.userIds.length > 0 ? item.userIds.split(',') : [];
+        }
       };
 
       const onUserGroupEdit = () => {
@@ -626,10 +676,19 @@
         }
       };
 
-      const onSeek = () => {
-        // eslint-disable-next-line no-console
-        console.log(multipleSelectValue.value);
+      const onGroupAddUser = () => {
+        userGroupData.value.userIds = addUserValues.value.join(',');
+        usergroupapi.update(userGroupData.value).then((res) => {
+          if (res.code == 0) {
+            pageUserGroup();
+            userGroupData.value = {};
+            showGroupAddUserModal.value = false;
+            window.$message.success('添加成功');
+          }
+        });
       };
+
+      const onSeek = () => {};
 
       return {
         seekOption,
@@ -653,6 +712,9 @@
         groupRules,
         dataUserGroup,
         groupItemOption,
+        showGroupAddUserModal,
+        allUserOption,
+        addUserValues,
         onUserCreate,
         onUserDeleteTip,
         onUserDelete,
@@ -663,6 +725,7 @@
         pageUserGroup,
         onGroupItemOptionSelect,
         onUserGroupEdit,
+        onGroupAddUser,
         People20Filled,
         Add12Filled,
         Delete24Regular,
