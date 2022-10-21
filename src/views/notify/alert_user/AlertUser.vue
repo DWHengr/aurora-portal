@@ -45,11 +45,18 @@
                       :name="item.id"
                     >
                       <template #header-extra>
-                        <NButton quaternary circle type="primary">
-                          <template #icon>
-                            <NIcon class="text-25px" :component="MoreVertical20Filled" />
-                          </template>
-                        </NButton>
+                        <n-dropdown
+                          trigger="click"
+                          :options="groupItemOption"
+                          :show-arrow="true"
+                          @select="(key) => onGroupItemOptionSelect(key, item)"
+                        >
+                          <NButton @click.stop quaternary circle type="primary">
+                            <template #icon>
+                              <NIcon class="text-25px" :component="MoreVertical20Filled" />
+                            </template>
+                          </NButton>
+                        </n-dropdown>
                       </template>
                       <n-ellipsis
                         :line-clamp="2"
@@ -59,38 +66,6 @@
                         <template #tooltip>
                           <div style="text-align: center; max-width: 300px">
                             {{ item.description }}
-                          </div>
-                        </template>
-                      </n-ellipsis>
-                      <div class="group-user-item">
-                        <div>
-                          <p class="inline-block leading-28px ml-1">用户1</p>
-                          <NButton class="absolute right-1" size="small">移除</NButton>
-                        </div>
-                      </div>
-                      <div class="group-user-item h-38px flex items-center">
-                        <div>
-                          <p class="inline-block">用户2</p>
-                          <NButton class="inline-block absolute right-1" size="small">移除</NButton>
-                        </div>
-                      </div>
-                    </n-collapse-item>
-                    <n-collapse-item class="n-collapse-item align-middle" title="组1" name="1">
-                      <template #header-extra>
-                        <NButton quaternary circle type="primary">
-                          <template #icon>
-                            <NIcon class="text-25px" :component="MoreVertical20Filled" />
-                          </template>
-                        </NButton>
-                      </template>
-                      <n-ellipsis
-                        :line-clamp="2"
-                        class="max-w-380px leading-16px text-gray-400 text-13px"
-                      >
-                        描述,述,述,述,述,述,述,述述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,,述,,述,述,述,述,述,述,述,述,述,述述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,
-                        <template #tooltip>
-                          <div style="text-align: center; max-width: 300px">
-                            描述,述,述,述,述,述,述,述述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,,述,,述,述,述,述,述,述,述,述,述,述述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,述,
                           </div>
                         </template>
                       </n-ellipsis>
@@ -295,7 +270,7 @@
             v-if="is0EditAnd1Create == 0"
             type="primary"
             class="w-20 m-1"
-            @click="onUserEdit"
+            @click="onUserGroupEdit"
           >
             确定
           </NButton>
@@ -377,6 +352,21 @@
       trigger: ['input', 'blur'],
     },
   };
+
+  const groupItemOption = [
+    {
+      label: '编辑',
+      key: 'edit',
+    },
+    {
+      label: '删除',
+      key: 'delete',
+    },
+    {
+      label: '添加用户',
+      key: 'addUser',
+    },
+  ];
 
   export default defineComponent({
     name: 'AlertUser',
@@ -543,8 +533,6 @@
       };
 
       const onUserDeleteTip = (row) => {
-        // eslint-disable-next-line no-console
-        console.log(checkedRows.value);
         let ids = [];
         let names = [];
         if (row.id) {
@@ -586,6 +574,58 @@
         }
       };
 
+      const onGroupItemOptionSelect = (key, item) => {
+        if (key == 'edit') {
+          showUserGroupModal.value = true;
+          is0EditAnd1Create.value = 0;
+          userGroupData.value = { ...item };
+        }
+        if (key == 'delete') {
+          onUserGroupDeleteTip(item);
+        }
+      };
+
+      const onUserGroupEdit = () => {
+        usergroupapi.update(userGroupData.value).then((res) => {
+          if (res.code == 0) {
+            pageUserGroup();
+            formGroupRef.value.restoreValidation();
+            userGroupData.value = {};
+            showUserGroupModal.value = false;
+            window.$message.success('修改成功');
+          }
+        });
+      };
+
+      const onUserGroupDeleteTip = (item) => {
+        dialog.warning({
+          title: '删除警告',
+          content: () => {
+            return h('lable', {}, [
+              '确定删除 ',
+              h('lable', { style: { color: '#8b5cf6', 'font-weight': 'bold' } }, item.name),
+              ' ?',
+            ]);
+          },
+          positiveText: '确定',
+          negativeText: '取消',
+          onPositiveClick: () => {
+            onUserGroupDelete([item.id]);
+          },
+        });
+      };
+
+      const onUserGroupDelete = (ids) => {
+        if (ids.length > 0) {
+          usergroupapi.deletes(ids).then((res) => {
+            if (res.code == 0) {
+              pageUserGroup();
+              window.$message.success('删除成功');
+            }
+          });
+        }
+      };
+
       const onSeek = () => {
         // eslint-disable-next-line no-console
         console.log(multipleSelectValue.value);
@@ -612,6 +652,7 @@
         formGroupRef,
         groupRules,
         dataUserGroup,
+        groupItemOption,
         onUserCreate,
         onUserDeleteTip,
         onUserDelete,
@@ -620,6 +661,8 @@
         onUserEdit,
         onUserGroupCreate,
         pageUserGroup,
+        onGroupItemOptionSelect,
+        onUserGroupEdit,
         People20Filled,
         Add12Filled,
         Delete24Regular,

@@ -270,6 +270,6 @@
     float: right;
   }
   .seek-dropdown {
-    background-color: rgba(221, 214, 254);
+    background-color: '#ddd6fe';
   }
 </style>

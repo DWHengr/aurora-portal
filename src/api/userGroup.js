@@ -7,4 +7,10 @@ export default {
   page(param) {
     return Http.post('/api/v1/usergroup/page', param);
   },
+  update(param) {
+    return Http.post('/api/v1/usergroup/update', param);
+  },
+  deletes(param) {
+    return Http.post('/api/v1/usergroup/deletes', param);
+  },
 };

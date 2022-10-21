@@ -45,6 +45,9 @@
     DataTable: {
       tdColorHover: '#e5e0ff',
     },
+    Dropdown: {
+      color: '#ddd6fe',
+    },
   };
 </script>
 
