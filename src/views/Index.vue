@@ -2,6 +2,7 @@
   <n-layout class="layout" has-sider>
     <n-layout-sider
       collapse-mode="width"
+      width="230"
       :inverted="true"
       :collapsed="collapsed"
       :collapsed-width="64"
