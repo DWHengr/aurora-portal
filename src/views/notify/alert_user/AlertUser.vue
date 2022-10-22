@@ -51,7 +51,7 @@
                           :show-arrow="true"
                           @select="(key) => onGroupItemOptionSelect(key, item)"
                         >
-                          <NButton @click.stop quaternary circle type="primary">
+                          <NButton class="mr-18px" @click.stop quaternary circle type="primary">
                             <template #icon>
                               <NIcon class="text-25px" :component="MoreVertical20Filled" />
                             </template>
@@ -72,12 +72,17 @@
                       </n-ellipsis>
                       <div
                         v-for="user in item.userIdsDetail"
-                        class="group-user-item"
+                        class="group-user-item mr-10px"
                         :key="user.id"
                       >
                         <div>
-                          <p class="inline-block leading-28px ml-1">{{ user.name }}</p>
-                          <NButton class="absolute right-1" size="small">移除</NButton>
+                          <p class="inline-block w-335px leading-28px ml-1">{{ user.name }}</p>
+                          <NButton
+                            class="inline-block"
+                            size="small"
+                            @click="() => onRemoveGroupUser(item, user.id)"
+                            >移除</NButton
+                          >
                         </div>
                       </div>
                     </n-collapse-item>
@@ -688,6 +693,23 @@
         });
       };
 
+      const onRemoveGroupUser = (item, userId) => {
+        userGroupData.value.id = item.id;
+        userGroupData.value.userIds = item.userIds.replace(new RegExp(',' + userId + ','), ',');
+        userGroupData.value.userIds = userGroupData.value.userIds.replace(
+          new RegExp(',?' + userId + ',?'),
+          ''
+        );
+        usergroupapi.update(userGroupData.value).then((res) => {
+          if (res.code == 0) {
+            pageUserGroup();
+            userGroupData.value = {};
+            showGroupAddUserModal.value = false;
+            window.$message.success('移除成功');
+          }
+        });
+      };
+
       const onSeek = () => {};
 
       return {
@@ -726,6 +748,7 @@
         onGroupItemOptionSelect,
         onUserGroupEdit,
         onGroupAddUser,
+        onRemoveGroupUser,
         People20Filled,
         Add12Filled,
         Delete24Regular,
