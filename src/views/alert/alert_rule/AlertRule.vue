@@ -43,7 +43,7 @@
 
 <script>
   import { h, defineComponent, ref } from 'vue';
-  import { NButton } from 'naive-ui';
+  import { NButton, useLoadingBar } from 'naive-ui';
   import { AlertOn20Filled } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
@@ -155,6 +155,7 @@
       const dVlaue = ref('');
       const router = useRouter();
       const checkedRowKeys = ref([]);
+      const loadingBar = useLoadingBar();
 
       const seekOptionClick = (key) => {
         seekSelect.value.$refs.triggerRef.$refs.patternInputRef._value = '1';

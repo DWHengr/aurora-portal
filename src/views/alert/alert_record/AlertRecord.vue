@@ -48,7 +48,7 @@
 
 <script>
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
-  import { NButton, NIcon, NTag } from 'naive-ui';
+  import { NButton, NIcon, useLoadingBar, NTag } from 'naive-ui';
   import { DocumentError20Filled, Delete24Regular } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
@@ -86,6 +86,7 @@
         pageSize: 10,
       });
       const is0EditAnd1Create = ref(0);
+      const loadingBar = useLoadingBar();
       const columns = [
         {
           type: 'selection',
@@ -154,6 +155,8 @@
       });
 
       const page = (pagedata) => {
+        loadingBar.finish();
+        loadingBar.start();
         recordapi
           .page({
             page: pagedata && typeof pagedata === 'number' ? pagedata : 1,
@@ -162,6 +165,7 @@
           })
           .then((res) => {
             if (res.code == 0) {
+              loadingBar.finish();
               data.value = res.data.dataList;
               pagination.itemCount = res.data.total;
               pagination.pageCount = Math.ceil(res.data.total / pagination.pageSize);

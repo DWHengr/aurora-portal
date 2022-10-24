@@ -329,7 +329,7 @@
   import { useRouter } from 'vue-router';
   import userapi from '@/api/user.js';
   import usergroupapi from '@/api/userGroup.js';
-  import { useDialog } from 'naive-ui';
+  import { useDialog, useLoadingBar } from 'naive-ui';
 
   const seekOption = [
     {
@@ -424,6 +424,7 @@
       const showUserGroupModal = ref(false);
       const allUserOption = ref([]);
       const addUserValues = ref([]);
+      const loadingBar = useLoadingBar();
       const pagination = reactive({
         pageSize: 9,
       });
@@ -489,6 +490,8 @@
       ];
 
       onMounted(() => {
+        loadingBar.finish();
+        loadingBar.start();
         page();
         pageUserGroup();
       });
@@ -501,6 +504,7 @@
             filters: multipleGroupSelectValue.value,
           })
           .then((res) => {
+            loadingBar.finish();
             if (res.code == 0) {
               dataUserGroup.value = res.data.dataList;
             }
@@ -515,6 +519,7 @@
             filters: multipleSelectValue.value,
           })
           .then((res) => {
+            loadingBar.finish();
             if (res.code == 0) {
               data.value = res.data.dataList;
               pagination.itemCount = res.data.total;

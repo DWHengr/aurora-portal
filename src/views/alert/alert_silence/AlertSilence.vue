@@ -179,7 +179,7 @@
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
   import silenceapi from '@/api/silence.js';
-  import { useDialog } from 'naive-ui';
+  import { useDialog, useLoadingBar } from 'naive-ui';
 
   const createSeekOptions = () => {
     return [
@@ -243,6 +243,7 @@
         pageSize: 10,
       });
       const is0EditAnd1Create = ref(0);
+      const loadingBar = useLoadingBar();
       const columns = [
         {
           type: 'selection',
@@ -371,6 +372,8 @@
       });
 
       const page = (pagedata) => {
+        loadingBar.finish();
+        loadingBar.start();
         silenceapi
           .page({
             page: pagedata && typeof pagedata === 'number' ? pagedata : 1,
@@ -378,6 +381,7 @@
             filters: multipleSelectValue.value,
           })
           .then((res) => {
+            loadingBar.finish();
             if (res.code == 0) {
               data.value = res.data.dataList;
               pagination.itemCount = res.data.total;

@@ -2,7 +2,9 @@
   <NConfigProvider :theme-overrides="ThemeOverrides" :locale="zhCN" :date-locale="dateZhCN">
     <NMessageProvider class="bg-purple-50">
       <NDialogProvider>
-        <RouterView />
+        <n-loading-bar-provider>
+          <RouterView />
+        </n-loading-bar-provider>
       </NDialogProvider>
     </NMessageProvider>
   </NConfigProvider>
@@ -47,6 +49,10 @@
     },
     Dropdown: {
       color: '#ddd6fe',
+    },
+    LoadingBar: {
+      colorLoading: '#B67AFF',
+      height: '5px',
     },
   };
 </script>
