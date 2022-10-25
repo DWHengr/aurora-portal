@@ -42,19 +42,36 @@
           :on-update:page="page"
         />
       </div>
+      <n-modal v-model:show="showModal" class="w-[600px]" :mask-closable="false" preset="card">
+        <template #header>
+          <div class="model-header items-center">
+            <NIcon size="26" class="text-purple-800 mr-2" :component="TextDescription24Filled" />
+            <div>属性详细信息</div>
+          </div>
+        </template>
+        <div class="mt-5">
+          <json-viewer :value="showJsonData" :expand-depth="2" copyable boxed sort />
+        </div>
+        <template #action>
+          <div class="flex justify-end w-full">
+            <NButton class="w-20 m-1" @click="showModal = false"> 关闭 </NButton>
+          </div>
+        </template>
+      </n-modal>
     </ACard>
   </div>
 </template>
 
 <script>
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
-  import { NButton, NIcon, useLoadingBar, NTag } from 'naive-ui';
-  import { DocumentError20Filled, Delete24Regular } from '@vicons/fluent';
+  import { NButton, NIcon, useLoadingBar, NTag, NEllipsis } from 'naive-ui';
+  import { DocumentError20Filled, Delete24Regular, TextDescription24Filled } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
   import recordapi from '@/api/record.js';
   import { useDialog } from 'naive-ui';
+  import JsonViewer from 'vue-json-viewer';
 
   const createSeekOptions = () => {
     return [
@@ -67,7 +84,7 @@
 
   export default defineComponent({
     name: 'AlertRecord',
-    components: { AFilterSeekInput, ACard },
+    components: { AFilterSeekInput, ACard, JsonViewer },
     setup() {
       const dialog = useDialog();
       const multipleSelectValue = ref([]);
@@ -77,6 +94,7 @@
       const checkedRows = ref([]);
       const data = ref([]);
       const showModal = ref(false);
+      const showJsonData = ref('');
       const recordData = ref({
         name: '',
         type: '',
@@ -85,7 +103,6 @@
       const pagination = reactive({
         pageSize: 10,
       });
-      const is0EditAnd1Create = ref(0);
       const loadingBar = useLoadingBar();
       const columns = [
         {
@@ -110,6 +127,38 @@
         {
           title: '属性',
           key: 'attribute',
+          render(row) {
+            return h(
+              NEllipsis,
+              {
+                style: 'max-width: 200px',
+              },
+              {
+                default: () => {
+                  return h(
+                    'a',
+                    {
+                      onClick: () => {
+                        showJsonData.value = JSON.parse(row.attribute);
+                        showModal.value = true;
+                      },
+                    },
+                    { default: () => row.attribute }
+                  );
+                },
+                tooltip: () => {
+                  return h(
+                    JsonViewer,
+                    {
+                      value: JSON.parse(row.attribute),
+                      expandDepth: 1,
+                    },
+                    {}
+                  );
+                },
+              }
+            );
+          },
         },
         {
           title: '创建时间',
@@ -229,16 +278,18 @@
         seekSelect,
         checkedRowKeys,
         checkedRows,
-        is0EditAnd1Create,
         showModal,
         recordData,
         formRef,
+        showJsonData,
+        JsonViewer,
         onRecordDeleteTip,
         onRecordDelete,
         page,
         onSeek,
         DocumentError20Filled,
         Delete24Regular,
+        TextDescription24Filled,
       };
     },
   });
@@ -250,5 +301,17 @@
     color: black;
     font-size: 20px;
     background: linear-gradient(to right, white, #c4b5fd);
+  }
+
+  .jv-container.jv-light .jv-button {
+    color: #6d28d9;
+  }
+  .jv-container.jv-light .jv-item.jv-string {
+    color: #6d28d9;
+  }
+  a {
+    color: #6d28d9;
+    cursor: pointer;
+    text-decoration: underline;
   }
 </style>
