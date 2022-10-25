@@ -115,6 +115,40 @@
         {
           title: '告警等级',
           key: 'severity',
+          render(row) {
+            return h(
+              NTag,
+              {
+                type: (() => {
+                  switch (row.severity) {
+                    case 'hint':
+                      return 'success';
+                    case 'minor':
+                      return 'info';
+                    case 'importance':
+                      return 'warning';
+                    case 'urgency':
+                      return 'error';
+                  }
+                })(),
+                bordered: false,
+              },
+              {
+                default: () => {
+                  switch (row.severity) {
+                    case 'hint':
+                      return '提示';
+                    case 'minor':
+                      return '次要';
+                    case 'importance':
+                      return '严重';
+                    case 'urgency':
+                      return '紧急';
+                  }
+                },
+              }
+            );
+          },
         },
         {
           title: '概述',
