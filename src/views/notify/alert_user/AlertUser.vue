@@ -17,6 +17,7 @@
                 <n-input-group class="w-330px">
                   <AFilterSeekInput
                     class="w-270px"
+                    @on-value-change="pageUserGroup"
                     v-model:value="multipleGroupSelectValue"
                     :seek-option="seekGroupOption"
                   />
@@ -99,6 +100,7 @@
             <div v-show="checkedRowKeys.length <= 0">
               <n-input-group class="w-[calc(100%-5.25rem)]">
                 <AFilterSeekInput
+                  @on-value-change="page"
                   class="w-full"
                   v-model:value="multipleSelectValue"
                   :seek-option="seekOption"

@@ -13,6 +13,7 @@
         <n-input-group class="w-[calc(100%-5.25rem)]">
           <AFilterSeekInput
             class="w-full"
+            @on-value-change="page"
             v-model:value="multipleSelectValue"
             :seek-option="seekOption"
           />

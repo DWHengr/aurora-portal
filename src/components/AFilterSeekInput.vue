@@ -51,7 +51,7 @@
         default: null,
       },
     },
-    emits: ['update:value'],
+    emits: ['update:value', 'onValueChange'],
     setup(props, { emit }) {
       const seekInput = ref(null);
       const seekDropdown = ref(null);
@@ -161,6 +161,7 @@
           if (vlaue.column === option?.key) {
             vlaue.value = kv[1];
             emit('update:value', selectedVlaue.value);
+            emit('onValueChange');
             break;
           }
         }
@@ -168,8 +169,10 @@
           selectedVlaue.value.push({
             column: option.key,
             value: kv[1],
+            operator: 'like',
           });
           emit('update:value', selectedVlaue.value);
+          emit('onValueChange');
         }
         inputValue.value = '';
       };
@@ -189,6 +192,7 @@
           if (vlaue.column === key) {
             selectedVlaue.value.splice(index, 1);
             emit('update:value', selectedVlaue.value);
+            emit('onValueChange');
             break;
           }
         }
@@ -199,6 +203,7 @@
         tags.value = [];
         selectedVlaue.value = [];
         emit('update:value', []);
+        emit('onValueChange');
       };
 
       const onClickoutside = () => {
