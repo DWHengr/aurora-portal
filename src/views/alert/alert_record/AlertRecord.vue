@@ -10,12 +10,34 @@
     <ACard class="mt-[15px]" :gradual="false">
       <!-- 操作栏 -->
       <div v-show="checkedRowKeys.length <= 0">
-        <n-input-group class="w-[calc(100%-5.25rem)]">
-          <AFilterSeekInput
-            class="w-full"
-            @on-value-change="page"
-            v-model:value="multipleSelectValue"
-            :seek-option="seekOption"
+        <n-input-group>
+          <n-input-group-label>规则名称：</n-input-group-label>
+          <n-input
+            @change="page"
+            v-model:value="seekValues.ruleName"
+            clearable
+            placeholder="请输入规则名称"
+            type="text"
+          />
+          <n-input-group-label>起始时间：</n-input-group-label>
+          <n-date-picker
+            @change="() => page()"
+            v-model:value="seekValues.startTime"
+            class="w-800px"
+            placeholder="请输入开始时间"
+            format="yyyy/MM/dd HH:mm:ss"
+            type="datetime"
+            clearable
+          />
+          <n-input-group-label>截止时间：</n-input-group-label>
+          <n-date-picker
+            @change="() => page()"
+            v-model:value="seekValues.endTime"
+            class="w-800px"
+            placeholder="请输入截止时间"
+            format="yyyy/MM/dd HH:mm:ss"
+            type="datetime"
+            clearable
           />
           <NButton type="primary" class="w-20" @click="page"> 查找 </NButton>
         </n-input-group>
@@ -78,17 +100,17 @@
     return [
       {
         label: '规则名称',
-        key: 'ruleName',
+        key: 'rule_name',
       },
     ];
   };
 
   export default defineComponent({
     name: 'AlertRecord',
-    components: { AFilterSeekInput, ACard, JsonViewer },
+    components: { ACard, JsonViewer },
     setup() {
       const dialog = useDialog();
-      const multipleSelectValue = ref([]);
+      const seekValues = ref({});
       const seekSelect = ref(null);
       const router = useRouter();
       const checkedRowKeys = ref([]);
@@ -241,11 +263,26 @@
       const page = (pagedata) => {
         loadingBar.finish();
         loadingBar.start();
+        let filters = [];
+        if (seekValues.value.ruleName)
+          filters.push({ column: 'rule_name', value: seekValues.value.ruleName, operator: 'like' });
+        if (seekValues.value.startTime)
+          filters.push({
+            column: 'create_time',
+            value: seekValues.value.startTime.toString(),
+            operator: '>',
+          });
+        if (seekValues.value.endTime)
+          filters.push({
+            column: 'create_time',
+            value: seekValues.value.endTime.toString(),
+            operator: '<',
+          });
         recordapi
           .page({
             page: pagedata && typeof pagedata === 'number' ? pagedata : 1,
             size: pagination.pageSize,
-            filters: multipleSelectValue.value,
+            filters: filters,
           })
           .then((res) => {
             if (res.code == 0) {
@@ -301,7 +338,7 @@
 
       const onSeek = () => {
         // eslint-disable-next-line no-console
-        console.log(multipleSelectValue.value);
+        console.log(seekValues.value);
       };
 
       return {
@@ -309,7 +346,7 @@
         columns,
         data,
         pagination,
-        multipleSelectValue,
+        seekValues,
         seekSelect,
         checkedRowKeys,
         checkedRows,

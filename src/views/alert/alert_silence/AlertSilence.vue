@@ -72,8 +72,8 @@
             class="text-purple-800 mr-2"
             :component="Edit16Filled"
           />
-          <div v-if="is0EditAnd1Create == 1">新增告警用户</div>
-          <div v-if="is0EditAnd1Create == 0">修改告警用户</div>
+          <div v-if="is0EditAnd1Create == 1">新增告警静默</div>
+          <div v-if="is0EditAnd1Create == 0">修改告警静默</div>
         </div>
       </template>
       <div class="mt-5">
