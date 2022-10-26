@@ -19,11 +19,11 @@ axios.interceptors.response.use(
     if (Object.getPrototypeOf(response.data) == Blob.prototype) {
       if (response.headers['content-type'] == 'application/json;charset=UTF-8') {
         fileUtil.fileToJson(response.data).then((res) => {
-          // responseUtil.responseMsg(res.code, res.msg);
+          responseUtil.responseMsg(res.code, res.msg);
         });
       }
     }
-    // responseUtil.responseMsg(response.data.code, response.data.msg);
+    responseUtil.responseMsg(response.data.code, response.data.msg);
     return Promise.resolve(response);
   },
   (error) => {
