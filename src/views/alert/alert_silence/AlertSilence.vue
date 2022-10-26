@@ -136,7 +136,18 @@
             <n-input v-if="silenceData.type == 'offday'" placeholder="周日" disabled />
           </n-form-item>
           <n-form-item label="备注:" path="description">
-            <n-input class="w-9" v-model:value="silenceData.description" placeholder="请输入备注" />
+            <n-input
+              class="w-9"
+              type="textarea"
+              maxlength="100"
+              show-count
+              :autosize="{
+                minRows: 3,
+                maxRows: 3,
+              }"
+              v-model:value="silenceData.description"
+              placeholder="请输入备注"
+            />
           </n-form-item>
         </n-form>
       </div>
@@ -167,7 +178,7 @@
 
 <script>
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
-  import { NButton, NIcon, NTag } from 'naive-ui';
+  import { NButton, NIcon, NTag, NEllipsis } from 'naive-ui';
   import {
     TabProhibited24Filled,
     Add12Filled,
@@ -325,6 +336,17 @@
         {
           title: '备注',
           key: 'description',
+          render(row) {
+            return h(
+              NEllipsis,
+              {
+                style: 'max-width: 200px',
+              },
+              {
+                default: () => row.description,
+              }
+            );
+          },
         },
         {
           title: '操作',

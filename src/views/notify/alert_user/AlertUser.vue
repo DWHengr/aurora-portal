@@ -255,6 +255,13 @@
           <n-form-item label="备注:" path="department">
             <n-input
               class="w-9"
+              type="textarea"
+              maxlength="100"
+              show-count
+              :autosize="{
+                minRows: 3,
+                maxRows: 3,
+              }"
               v-model:value="userGroupData.description"
               placeholder="请输入备注"
             />
