@@ -107,12 +107,11 @@
               type="datetime"
               clearable
             />
-            <n-date-picker
+            <n-time-picker
               v-if="silenceData.type == 'everyday'"
               class="w-full"
               v-model:value="silenceData.startTime"
               placeholder="请输入静默开始时间"
-              type="date"
               clearable
             />
             <n-input v-if="silenceData.type == 'offday'" placeholder="周六" disabled />
@@ -127,12 +126,11 @@
               type="datetime"
               clearable
             />
-            <n-date-picker
+            <n-time-picker
               v-if="silenceData.type == 'everyday'"
               class="w-full"
               v-model:value="silenceData.endTime"
               placeholder="请输入静默结束时间"
-              type="date"
               clearable
             />
             <n-input v-if="silenceData.type == 'offday'" placeholder="周日" disabled />
