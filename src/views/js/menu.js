@@ -6,6 +6,7 @@ import {
   Settings20Filled,
   ClockAlarm20Filled,
   People20Filled,
+  BarcodeScanner24Filled,
   TabProhibited24Filled,
 } from '@vicons/fluent';
 
@@ -23,6 +24,11 @@ export const menus = [
         label: '告警规则',
         key: 'rule',
         icon: renderIcon(AlertOn20Filled),
+      },
+      {
+        label: '告警指标',
+        key: 'metric',
+        icon: renderIcon(BarcodeScanner24Filled),
       },
       {
         label: '告警记录',

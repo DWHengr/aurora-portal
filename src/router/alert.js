@@ -16,6 +16,16 @@ export default {
       component: () => import('@/views/alert/alert_rule/AlertRule.vue'),
     },
     {
+      path: 'metric',
+      name: 'metric',
+      meta: {
+        title: '告警指标',
+        parentName: '告警管理',
+        path: '/metric',
+      },
+      component: () => import('@/views/alert/alert_metric/AlertMetric.vue'),
+    },
+    {
       path: 'rule/create',
       name: 'rulecreate',
       meta: {
