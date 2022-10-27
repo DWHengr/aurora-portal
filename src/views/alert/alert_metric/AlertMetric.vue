@@ -163,7 +163,7 @@
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
-  import metricapi from '@/api/silence.js';
+  import metricapi from '@/api/metric.js';
   import { useDialog, useLoadingBar } from 'naive-ui';
 
   const createSeekOptions = () => {
