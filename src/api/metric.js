@@ -4,4 +4,10 @@ export default {
   page(param) {
     return Http.post('/api/v1/metric/page', param);
   },
+  create(param) {
+    return Http.post('/api/v1/metric/create', param);
+  },
+  deletes(param) {
+    return Http.post('/api/v1/metric/deletes', param);
+  },
 };
