@@ -10,4 +10,7 @@ export default {
   deletes(param) {
     return Http.post('/api/v1/metric/deletes', param);
   },
+  update(param) {
+    return Http.post('/api/v1/metric/update', param);
+  },
 };
