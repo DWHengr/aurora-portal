@@ -5,6 +5,11 @@ import Notify from './notify';
 const routes = [
   {
     path: '/',
+    name: 'login',
+    component: () => import('@/views/login/Login.vue'),
+  },
+  {
+    path: '/index',
     name: 'index',
     component: () => import('@/views/Index.vue'),
     meta: [{ name: 'index', path: '/index' }],
