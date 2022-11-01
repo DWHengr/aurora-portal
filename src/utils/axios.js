@@ -10,6 +10,7 @@ export { SERVICE_URL, IP, UPLOAD_IP };
 
 // request 请求之前
 axios.interceptors.request.use((config) => {
+  config.headers['Aurora-Token'] = sessionStorage.getItem('Aurora-Token');
   return config;
 });
 

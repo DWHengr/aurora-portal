@@ -5,16 +5,28 @@
         <div class="login">
           <h2>
             <img
-              class="w-30px inline-block mr-1 pointer-events-none"
+              class="w-30px inline-block mr-1 pointer-events-none text-red-600"
               src="@/assets/logo.png"
               alt=""
             />用户登录</h2
           >
-          <div class="login_box"> <input type="text" required /><label>用户名</label> </div>
           <div class="login_box">
-            <input type="password" required="required" /><label>密码</label>
+            <input type="text" v-model="username" required /><label
+              :style="{
+                color: IsUsernameTitleColor,
+              }"
+              >{{ usernameTitle }}</label
+            >
           </div>
-          <a href="javascript:void(0)">
+          <div class="login_box">
+            <input type="password" v-model="password" required /><label
+              :style="{
+                color: IsPasswordTitleColor,
+              }"
+              >{{ passwordTitle }}</label
+            >
+          </div>
+          <a @click="onLogin">
             登录
             <span></span>
             <span></span>
@@ -28,7 +40,73 @@
   </div>
 </template>
 
-<script></script>
+<script>
+  import { defineComponent, ref, watch } from 'vue';
+  import { useRouter } from 'vue-router';
+  import loginapi from '@/api/login.js';
+  export default defineComponent({
+    name: 'Login',
+    setup() {
+      const router = useRouter();
+      let username = ref('');
+      let password = ref('');
+      let usernameTitle = ref('用户名');
+      let passwordTitle = ref('密码');
+      let IsUsernameTitleColor = ref('#fff');
+      let IsPasswordTitleColor = ref('#fff');
+
+      watch(username, () => {
+        verifyUsername();
+      });
+      watch(password, () => {
+        verifyPassword();
+      });
+
+      const verifyUsername = () => {
+        if (username.value.length <= 0) {
+          usernameTitle.value = '请输入用户名';
+          IsUsernameTitleColor.value = '#47ebae';
+        } else {
+          usernameTitle.value = '用户名';
+          IsUsernameTitleColor.value = '#fff';
+        }
+      };
+
+      const verifyPassword = () => {
+        if (password.value.length <= 0) {
+          passwordTitle.value = '请输入密码';
+          IsPasswordTitleColor.value = '#47ebae';
+        } else {
+          passwordTitle.value = '密码';
+          IsPasswordTitleColor.value = '#fff';
+        }
+      };
+
+      const onLogin = () => {
+        if (username.value.length > 0 && password.value > 0) {
+          loginapi.login({ username: username.value, password: password.value }).then((res) => {
+            if (res.code == 0) {
+              sessionStorage.setItem('Aurora-Token', res.data);
+              router.push({ path: '/alert/rule' });
+            }
+          });
+        } else {
+          verifyPassword();
+          verifyUsername();
+        }
+      };
+      return {
+        onLogin,
+        username,
+        password,
+        usernameTitle,
+        passwordTitle,
+        IsUsernameTitleColor,
+        IsPasswordTitleColor,
+      };
+    },
+  });
+</script>
 
 <style>
   .login-container {
@@ -41,6 +119,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .red {
+    color: red;
   }
 
   .login-container::before {
@@ -159,6 +241,7 @@
     color: #47ebae;
     text-decoration: none;
     transition: all 0.5s;
+    user-select: none;
   }
   .login a:hover {
     color: #fff;

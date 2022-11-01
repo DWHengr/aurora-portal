@@ -23,4 +23,18 @@ const router = new createRouter({
   routes: routes,
 });
 
+router.beforeEach((to, from, next) => {
+  if (!window.sessionStorage.getItem('Aurora-Token') && to.path !== '/') {
+    next({
+      path: '/',
+    });
+  } else {
+    if ((window.sessionStorage.getItem('Aurora-Token') && to.path == '/') || to.matched.length == 0)
+      next({
+        path: '/alert/rule',
+      });
+    next();
+  }
+});
+
 export default router;
