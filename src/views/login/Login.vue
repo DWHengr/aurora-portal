@@ -44,6 +44,7 @@
   import { defineComponent, ref, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import loginapi from '@/api/login.js';
+  import { useLoadingBar } from 'naive-ui';
   export default defineComponent({
     name: 'Login',
     setup() {
@@ -54,6 +55,7 @@
       let passwordTitle = ref('密码');
       let IsUsernameTitleColor = ref('#fff');
       let IsPasswordTitleColor = ref('#fff');
+      const loadingBar = useLoadingBar();
 
       watch(username, () => {
         verifyUsername();
@@ -84,7 +86,9 @@
 
       const onLogin = () => {
         if (username.value.length > 0 && password.value > 0) {
+          loadingBar.start();
           loginapi.login({ username: username.value, password: password.value }).then((res) => {
+            loadingBar.finish();
             if (res.code == 0) {
               sessionStorage.setItem('Aurora-Token', res.data);
               router.push({ path: '/alert/rule' });
