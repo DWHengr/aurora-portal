@@ -9,7 +9,6 @@
         <n-icon :component="TextGrammarArrowRight20Filled" size="28" v-if="collapsed" />
         <n-icon :component="TextGrammarArrowLeft20Filled" size="28" v-else />
       </div>
-      <!-- 面包屑 -->
       <n-breadcrumb>
         <template v-for="routeItem in breadcrumbList" :key="routeItem.name">
           <n-breadcrumb-item v-if="routeItem.meta.title">
@@ -31,6 +30,9 @@
         </template>
       </n-breadcrumb>
     </div>
+    <n-avatar size="large" round class="mr-18px select-none"
+      ><label class="text-purple-500 font-semibold">Admin</label></n-avatar
+    >
   </div>
 </template>
 
