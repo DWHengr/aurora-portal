@@ -1,6 +1,6 @@
 <template>
   <NConfigProvider :theme-overrides="ThemeOverrides" :locale="zhCN" :date-locale="dateZhCN">
-    <NMessageProvider class="bg-purple-50">
+    <NMessageProvider>
       <NDialogProvider>
         <n-loading-bar-provider>
           <RouterView />

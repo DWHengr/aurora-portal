@@ -38,7 +38,7 @@
   import { useMessage } from 'naive-ui';
 
   const collapsed = ref(true);
-  window.$message = useMessage();
+  if (!window.$message) window.$message = useMessage();
 </script>
 
 <style lang="less">

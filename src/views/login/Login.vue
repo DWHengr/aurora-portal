@@ -44,10 +44,11 @@
   import { defineComponent, ref, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import loginapi from '@/api/login.js';
-  import { useLoadingBar } from 'naive-ui';
+  import { useLoadingBar, useMessage } from 'naive-ui';
   export default defineComponent({
     name: 'Login',
     setup() {
+      if (!window.$message) window.$message = useMessage();
       const router = useRouter();
       let username = ref('');
       let password = ref('');
@@ -85,10 +86,10 @@
       };
 
       const onLogin = () => {
-        if (username.value.length > 0 && password.value > 0) {
-          loadingBar.start();
+        if (username.value.length > 0 && password.value.length > 0) {
+          // loadingBar.start();
           loginapi.login({ username: username.value, password: password.value }).then((res) => {
-            loadingBar.finish();
+            // loadingBar.finish();
             if (res.code == 0) {
               sessionStorage.setItem('Aurora-Token', res.data);
               router.push({ path: '/alert/rule' });
