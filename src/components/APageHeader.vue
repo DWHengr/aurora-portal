@@ -30,16 +30,28 @@
         </template>
       </n-breadcrumb>
     </div>
-    <n-avatar size="large" round class="mr-18px select-none"
-      ><label class="text-purple-500 font-semibold">Admin</label></n-avatar
-    >
+    <n-dropdown trigger="hover" :options="avatarDropdownOptions" @select="onAvatarDropdownSelect">
+      <n-avatar size="large" round class="mr-28px select-none"
+        ><label class="text-purple-500 font-semibold">Admin</label></n-avatar
+      >
+    </n-dropdown>
   </div>
 </template>
 
 <script>
   import { TextGrammarArrowRight20Filled, TextGrammarArrowLeft20Filled } from '@vicons/fluent';
+  import { LogOut } from '@vicons/ionicons5';
   import { useRouter, useRoute } from 'vue-router';
-  import { defineComponent, computed } from 'vue';
+  import { NIcon } from 'naive-ui';
+  import { defineComponent, computed, h } from 'vue';
+
+  const renderIcon = (icon) => {
+    return () => {
+      return h(NIcon, null, {
+        default: () => h(icon),
+      });
+    };
+  };
 
   export default defineComponent({
     name: 'APageHeader',
@@ -53,6 +65,7 @@
     setup(props) {
       const router = useRouter();
       const route = useRoute();
+      const avatarDropdownOptions = [{ label: '退出', key: 'logout', icon: renderIcon(LogOut) }];
 
       const generator = (routerMap) => {
         return routerMap
@@ -77,14 +90,24 @@
         router.push({ name: key });
       };
 
+      const onAvatarDropdownSelect = (key) => {
+        if (key == 'logout') {
+          sessionStorage.removeItem('Aurora-Token');
+          router.push({ path: '/' });
+        }
+      };
+
       const breadcrumbList = computed(() => {
         return generator(route.matched);
       });
       return {
         TextGrammarArrowRight20Filled,
         TextGrammarArrowLeft20Filled,
+        LogOut,
         breadcrumbList,
+        avatarDropdownOptions,
         dropdownSelect,
+        onAvatarDropdownSelect,
       };
     },
   });
