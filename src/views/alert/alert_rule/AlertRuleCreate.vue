@@ -14,7 +14,7 @@
       <a-card :gradual="false" class="mt-[15px]">
         <n-form
           ref="formRef"
-          :model="model"
+          :model="ruleData"
           :rules="rules"
           :label-width="120"
           label-placement="left"
@@ -23,19 +23,27 @@
           }"
         >
           <p class="divide-label">基本信息</p>
-          <n-form-item label="名称:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          <n-form-item label="名称:" path="name">
+            <n-input class="w-9" v-model:value="ruleData.name" placeholder="请输入规则名称" />
           </n-form-item>
-          <n-form-item label="告警等级:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          <n-form-item label="告警等级:" path="severity">
+            <n-select
+              v-model:value="ruleData.severity"
+              placeholder="请选择告警等级"
+              :options="severityTypeOptions"
+            />
           </n-form-item>
-          <n-form-item label="回调接口:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+          <n-form-item label="告警静默:" path="alertSilencesId">
+            <n-select
+              v-model:value="ruleData.alertSilencesId"
+              placeholder="请选择告警静默"
+              :options="severityTypeOptions"
+            />
           </n-form-item>
           <p class="divide-label">告警对象</p>
           <n-dynamic-input
             class="pl-[120px]"
-            v-model:value="model.alertObject"
+            v-model:value="ruleData.alertObject"
             item-style="margin-bottom: 0;"
             :on-create="onCreateAlertObject"
           >
@@ -49,7 +57,7 @@
                   :rule="dynamicInputRule"
                 >
                   <n-input
-                    v-model:value="model.alertObject[index].name"
+                    v-model:value="ruleData.alertObject[index].name"
                     placeholder="key"
                     @keydown.enter.prevent
                   />
@@ -62,7 +70,7 @@
                   :rule="dynamicInputRule"
                 >
                   <n-input
-                    v-model:value="model.alertObject[index].value"
+                    v-model:value="ruleData.alertObject[index].value"
                     placeholder="Value"
                     @keydown.enter.prevent
                   />
@@ -72,11 +80,20 @@
           </n-dynamic-input>
           <p class="divide-label">告警规则</p>
           <div>
+            <div>
+              <n-form-item label="间隔时间(m):" path="alertInterval">
+                <n-input
+                  class="w-9"
+                  v-model:value="ruleData.alertInterval"
+                  placeholder="请输入告警间隔时间"
+                />
+              </n-form-item>
+            </div>
             <div class="flex justify-end"
               >告警规则：满足以下指标判断条件，且告警规则持续时间
               <n-form-item class="w-38 inline-block" path="selectValue">
                 <n-select
-                  v-model:value="model.selectValue"
+                  v-model:value="ruleData.selectValue"
                   placeholder="告警规则持续时间"
                   :options="generalOptions"
                 /> </n-form-item
@@ -85,7 +102,7 @@
             <div>
               <n-dynamic-input
                 class="pl-[120px]"
-                v-model:value="model.alertMetric"
+                v-model:value="ruleData.alertMetric"
                 item-style="margin-bottom: 0;"
                 :on-create="onCreateAlertMetric"
               >
@@ -99,7 +116,7 @@
                       :path="`alertMetric[${index}].metric_id`"
                     >
                       <n-select
-                        v-model:value="model.alertMetric[index].metric_id"
+                        v-model:value="ruleData.alertMetric[index].metric_id"
                         placeholder="告警指标"
                         :options="generalOptions"
                       />
@@ -112,7 +129,7 @@
                       :rule="dynamicInputRule"
                     >
                       <n-select
-                        v-model:value="model.alertMetric[index].statistics"
+                        v-model:value="ruleData.alertMetric[index].statistics"
                         placeholder="统计时间"
                         :options="generalOptions"
                       />
@@ -125,7 +142,7 @@
                       :rule="dynamicInputRule"
                     >
                       <n-select
-                        v-model:value="model.alertMetric[index].operator"
+                        v-model:value="ruleData.alertMetric[index].operator"
                         placeholder="操作符"
                         :options="generalOptions"
                       />
@@ -138,7 +155,7 @@
                       :rule="dynamicInputRule"
                     >
                       <n-input
-                        v-model:value="model.alertMetric[index].alert_value"
+                        v-model:value="ruleData.alertMetric[index].alert_value"
                         placeholder="告警值"
                         @keydown.enter.prevent
                       />
@@ -150,13 +167,13 @@
           </div>
           <p class="divide-label">告警规则</p>
           <n-form-item label="名称:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+            <n-input class="w-9" v-model:value="ruleData.inputValue" placeholder="请输入规则名称" />
           </n-form-item>
           <n-form-item label="告警等级:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+            <n-input class="w-9" v-model:value="ruleData.inputValue" placeholder="请输入规则名称" />
           </n-form-item>
           <n-form-item label="回调接口:" path="inputValue">
-            <n-input class="w-9" v-model:value="model.inputValue" placeholder="请输入规则名称" />
+            <n-input class="w-9" v-model:value="ruleData.inputValue" placeholder="请输入规则名称" />
           </n-form-item>
         </n-form>
       </a-card>
@@ -169,13 +186,31 @@
   import { defineComponent, ref, onMounted } from 'vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
+  const severityTypeOptions = [
+    {
+      label: '提示',
+      value: 'hint',
+    },
+    {
+      label: '次要',
+      value: 'minor',
+    },
+    {
+      label: '严重',
+      value: 'importance',
+    },
+    {
+      label: '紧急',
+      value: 'urgency',
+    },
+  ];
   export default defineComponent({
     components: { ACard },
     setup() {
       let router = useRouter();
       let screenHeight = ref(window.innerHeight - 89);
 
-      let model = ref({
+      let ruleData = ref({
         name: null,
         severity: null,
         webhook: null,
@@ -211,8 +246,9 @@
         };
       };
       return {
-        model,
+        ruleData,
         screenHeight,
+        severityTypeOptions,
         onBaackRulePage,
         onCreateAlertObject,
         onCreateAlertMetric,
