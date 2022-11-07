@@ -13,4 +13,7 @@ export default {
   update(param) {
     return Http.post('/api/v1/silence/update', param);
   },
+  all() {
+    return Http.post('/api/v1/silence/all');
+  },
 };

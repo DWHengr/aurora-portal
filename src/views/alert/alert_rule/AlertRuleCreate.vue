@@ -37,13 +37,13 @@
             <n-select
               v-model:value="ruleData.alertSilencesId"
               placeholder="请选择告警静默"
-              :options="severityTypeOptions"
+              :options="silenceOptions"
             />
           </n-form-item>
           <p class="divide-label">告警对象</p>
           <n-dynamic-input
             class="pl-[120px]"
-            v-model:value="ruleData.alertObject"
+            v-model:value="ruleData.alertObjectArr"
             item-style="margin-bottom: 0;"
             :on-create="onCreateAlertObject"
           >
@@ -53,11 +53,11 @@
                 <n-form-item
                   ignore-path-change
                   :show-label="false"
-                  :path="`alertObject[${index}].name`"
+                  :path="`alertObjectArr[${index}].name`"
                   :rule="dynamicInputRule"
                 >
                   <n-input
-                    v-model:value="ruleData.alertObject[index].name"
+                    v-model:value="ruleData.alertObjectArr[index].name"
                     placeholder="key"
                     @keydown.enter.prevent
                   />
@@ -66,11 +66,11 @@
                 <n-form-item
                   ignore-path-change
                   :show-label="false"
-                  :path="`alertObject[${index}].value`"
+                  :path="`alertObjectArr[${index}].value`"
                   :rule="dynamicInputRule"
                 >
                   <n-input
-                    v-model:value="ruleData.alertObject[index].value"
+                    v-model:value="ruleData.alertObjectArr[index].value"
                     placeholder="Value"
                     @keydown.enter.prevent
                   />
@@ -84,6 +84,7 @@
               <n-form-item label="间隔时间(m):" path="alertInterval">
                 <n-input
                   class="w-9"
+                  :allow-input="(value) => !value || /^\d+$/.test(value)"
                   v-model:value="ruleData.alertInterval"
                   placeholder="请输入告警间隔时间"
                 />
@@ -91,18 +92,19 @@
             </div>
             <div class="flex justify-end"
               >告警规则：满足以下指标判断条件，且告警规则持续时间
-              <n-form-item class="w-38 inline-block" path="selectValue">
-                <n-select
-                  v-model:value="ruleData.selectValue"
-                  placeholder="告警规则持续时间"
-                  :options="generalOptions"
+              <n-form-item class="w-34 inline-block" path="persistent">
+                <n-input
+                  size="small"
+                  :allow-input="(value) => !value || /^\d+$/.test(value)"
+                  v-model:value="ruleData.persistent"
+                  placeholder="规则持续时间(m)"
                 /> </n-form-item
               >，则触发。</div
             >
             <div>
               <n-dynamic-input
                 class="pl-[120px]"
-                v-model:value="ruleData.alertMetric"
+                v-model:value="ruleData.rulesArr"
                 item-style="margin-bottom: 0;"
                 :on-create="onCreateAlertMetric"
               >
@@ -113,68 +115,87 @@
                       ignore-path-change
                       :show-label="false"
                       class="w-38"
-                      :path="`alertMetric[${index}].metric_id`"
+                      :path="`rulesArr[${index}].metric_id`"
                     >
                       <n-select
-                        v-model:value="ruleData.alertMetric[index].metric_id"
+                        v-model:value="ruleData.rulesArr[index].metric_id"
                         placeholder="告警指标"
-                        :options="generalOptions"
+                        filterable
+                        :options="metricsOptions"
+                        @update:value="
+                          (id, row) => onMetricSelectUpdate(row, ruleData.rulesArr[index])
+                        "
                       />
                     </n-form-item>
                     <n-form-item
-                      class="w-30"
+                      class="w-26"
                       ignore-path-change
                       :show-label="false"
-                      :path="`alertMetric[${index}].statistics`"
-                      :rule="dynamicInputRule"
-                    >
-                      <n-select
-                        v-model:value="ruleData.alertMetric[index].statistics"
-                        placeholder="统计时间"
-                        :options="generalOptions"
-                      />
-                    </n-form-item>
-                    <n-form-item
-                      class="w-20"
-                      ignore-path-change
-                      :show-label="false"
-                      :path="`alertMetric[${index}].operator`"
-                      :rule="dynamicInputRule"
-                    >
-                      <n-select
-                        v-model:value="ruleData.alertMetric[index].operator"
-                        placeholder="操作符"
-                        :options="generalOptions"
-                      />
-                    </n-form-item>
-                    <n-form-item
-                      class="w-20"
-                      ignore-path-change
-                      :show-label="false"
-                      :path="`alertMetric[${index}].alert_value`"
+                      :path="`rulesArr[${index}].statistics`"
                       :rule="dynamicInputRule"
                     >
                       <n-input
-                        v-model:value="ruleData.alertMetric[index].alert_value"
-                        placeholder="告警值"
-                        @keydown.enter.prevent
+                        v-model:value="ruleData.rulesArr[index].statistics"
+                        :allow-input="(value) => !value || /^\d+$/.test(value)"
+                        placeholder="统计时间(m)"
                       />
+                    </n-form-item>
+                    <n-form-item
+                      class="w-20"
+                      ignore-path-change
+                      :show-label="false"
+                      :path="`rulesArr[${index}].operator`"
+                      :rule="dynamicInputRule"
+                    >
+                      <n-select
+                        v-model:value="ruleData.rulesArr[index].operator"
+                        placeholder="操作符"
+                        :options="ruleData.rulesArr[index].operOption"
+                      />
+                    </n-form-item>
+                    <n-form-item
+                      class="w-26"
+                      ignore-path-change
+                      :show-label="false"
+                      :path="`rulesArr[${index}].alert_value`"
+                      :rule="dynamicInputRule"
+                    >
+                      <n-input
+                        v-model:value="ruleData.rulesArr[index].alert_value"
+                        placeholder="告警值"
+                        :allow-input="(value) => !value || /^\d+$/.test(value)"
+                        @keydown.enter.prevent
+                      >
+                        <template #suffix> {{ ruleData.rulesArr[index].unit }} </template>
+                      </n-input>
                     </n-form-item>
                   </div>
                 </template>
               </n-dynamic-input>
             </div>
           </div>
-          <p class="divide-label">告警规则</p>
-          <n-form-item label="名称:" path="inputValue">
-            <n-input class="w-9" v-model:value="ruleData.inputValue" placeholder="请输入规则名称" />
-          </n-form-item>
-          <n-form-item label="告警等级:" path="inputValue">
-            <n-input class="w-9" v-model:value="ruleData.inputValue" placeholder="请输入规则名称" />
+          <p class="divide-label">告警通知</p>
+          <n-form-item label="告警通知组:" path="inputValue">
+            <n-select v-model:value="value" multiple :options="options" />
           </n-form-item>
           <n-form-item label="回调接口:" path="inputValue">
-            <n-input class="w-9" v-model:value="ruleData.inputValue" placeholder="请输入规则名称" />
+            <n-input
+              class="w-9"
+              type="textarea"
+              maxlength="120"
+              show-count
+              :autosize="{
+                minRows: 2,
+                maxRows: 2,
+              }"
+              v-model:value="ruleData.webhook"
+              placeholder="请输入回调接口"
+            />
           </n-form-item>
+          <div class="flex justify-center">
+            <NButton class="w-80px" @click="onBaackRulePage"> 返回 </NButton>
+            <NButton class="ml-20px w-80px" @click="onCreateRule" type="primary"> 创建 </NButton>
+          </div>
         </n-form>
       </a-card>
     </div>
@@ -186,6 +207,9 @@
   import { defineComponent, ref, onMounted } from 'vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
+  import silenceapi from '@/api/silence.js';
+  import metricapi from '@/api/metric.js';
+  import ruleapi from '@/api/rule.js';
   const severityTypeOptions = [
     {
       label: '提示',
@@ -209,25 +233,109 @@
     setup() {
       let router = useRouter();
       let screenHeight = ref(window.innerHeight - 89);
-
+      let silenceOptions = ref([]);
+      let metricsOptions = ref([]);
       let ruleData = ref({
         name: null,
         severity: null,
         webhook: null,
-        alertObject: [],
-        alertMetric: [],
+        alertSilencesId: null,
+        description: null,
+        persistent: null,
+        alertInterval: null,
+        rulesStatus: null,
+        alertObjectArr: [],
+        rulesArr: [],
       });
 
       onMounted(() => {
         window.onresize = () => {
           screenHeight.value = window.innerHeight - 89;
-          // eslint-disable-next-line no-console
-          console.log(window.innerHeight);
         };
+        getAllSilences();
+        getAllMetrics();
       });
+
+      const getAllSilences = () => {
+        silenceapi.all().then((res) => {
+          if (res.code == 0) {
+            let options = [];
+            for (let index = 0; index < res.data?.length; index++) {
+              let item = res.data[index];
+              options.push({
+                label: item.name,
+                value: item.id,
+              });
+            }
+            silenceOptions.value = options;
+          }
+        });
+      };
+
+      const getAllMetrics = () => {
+        metricapi.all().then((res) => {
+          if (res.code == 0) {
+            let options = [];
+            for (let index = 0; index < res.data?.length; index++) {
+              let item = res.data[index];
+              options.push({
+                label: item.name,
+                value: item.id,
+                unit: item.unit,
+                operator: item.operator,
+              });
+            }
+            metricsOptions.value = options;
+          }
+        });
+      };
 
       const onBaackRulePage = () => {
         router.push({ name: 'rule' });
+      };
+
+      const onCreateRule = () => {
+        let data = {};
+        data.severity = ruleData.value.severity;
+        data.webhook = ruleData.value.webhook;
+        data.alertSilencesId = ruleData.value.alertSilencesId;
+        data.description = ruleData.value.webhook;
+        data.name = ruleData.value.name;
+        data.persistent = ruleData.value.persistent + 'm';
+        data.alertInterval = ruleData.value.alertInterval + 'm';
+        data.rulesStatus = '0';
+        data.alertObjectArr = {};
+        for (let index = 0; index < ruleData.value.alertObjectArr?.length; index++) {
+          let item = ruleData.value.alertObjectArr[index];
+          data.alertObjectArr[item.name] = item.value;
+        }
+        data.rulesArr = [];
+        for (let index = 0; index < ruleData.value.rulesArr?.length; index++) {
+          let item = ruleData.value.rulesArr[index];
+          data.rulesArr.push({
+            alert_value: item.alert_value,
+            metric_id: item.metric_id,
+            operator: item.operator,
+            statistics: item.statistics + 'm',
+          });
+        }
+        ruleapi.create(data).then((res) => {
+          if (res.code == 0) {
+            window.$message.success('添加成功');
+            ruleData.value = {
+              name: null,
+              severity: null,
+              webhook: null,
+              alertSilencesId: null,
+              description: null,
+              persistent: null,
+              alertInterval: null,
+              rulesStatus: null,
+              alertObjectArr: [],
+              rulesArr: [],
+            };
+          }
+        });
       };
 
       const onCreateAlertObject = () => {
@@ -245,13 +353,27 @@
           alert_value: '',
         };
       };
+
+      const onMetricSelectUpdate = (row, data) => {
+        data.unit = row.unit;
+        let operOption = [];
+        let operArr = row.operator.split(',');
+        for (let index = 0; index < operArr.length; index++) {
+          operOption.push({ label: operArr[index], value: operArr[index] });
+        }
+        data.operOption = operOption;
+      };
       return {
         ruleData,
         screenHeight,
         severityTypeOptions,
+        silenceOptions,
+        metricsOptions,
         onBaackRulePage,
+        onCreateRule,
         onCreateAlertObject,
         onCreateAlertMetric,
+        onMetricSelectUpdate,
         ArrowReply20Filled,
       };
     },
@@ -267,7 +389,7 @@
     width: 0px;
   }
   .divide-label {
-    margin-top: 10px;
+    margin-top: 8px;
     margin-bottom: 20px;
     font-size: 16px;
     &::before {

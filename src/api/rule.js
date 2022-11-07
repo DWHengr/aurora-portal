@@ -7,4 +7,7 @@ export default {
   deletes(param) {
     return Http.post('/api/v1/rule/deletes', param);
   },
+  create(param) {
+    return Http.post('/api/v1/rule/create', param);
+  },
 };
