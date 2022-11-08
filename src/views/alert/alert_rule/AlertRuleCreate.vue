@@ -19,7 +19,7 @@
           :label-width="120"
           label-placement="left"
           :style="{
-            maxWidth: '640px',
+            maxWidth: '700px',
           }"
         >
           <p class="divide-label">基本信息</p>
@@ -82,9 +82,8 @@
           <div>
             <div>
               <n-form-item label="间隔时间(m):" path="alertInterval">
-                <n-input
+                <ATimeInputVue
                   class="w-9"
-                  :allow-input="(value) => !value || /^\d+$/.test(value)"
                   v-model:value="ruleData.alertInterval"
                   placeholder="请输入告警间隔时间"
                 />
@@ -92,13 +91,8 @@
             </div>
             <div class="flex justify-end"
               >告警规则：满足以下指标判断条件，且告警规则持续时间
-              <n-form-item class="w-34 inline-block" path="persistent">
-                <n-input
-                  size="small"
-                  :allow-input="(value) => !value || /^\d+$/.test(value)"
-                  v-model:value="ruleData.persistent"
-                  placeholder="规则持续时间(m)"
-                /> </n-form-item
+              <n-form-item class="w-36 inline-block" path="persistent">
+                <ATimeInputVue v-model:value="ruleData.persistent" /> </n-form-item
               >，则触发。</div
             >
             <div>
@@ -128,16 +122,15 @@
                       />
                     </n-form-item>
                     <n-form-item
-                      class="w-26"
+                      class="w-40"
                       ignore-path-change
                       :show-label="false"
                       :path="`rulesArr[${index}].statistics`"
                       :rule="dynamicInputRule"
                     >
-                      <n-input
+                      <ATimeInputVue
                         v-model:value="ruleData.rulesArr[index].statistics"
-                        :allow-input="(value) => !value || /^\d+$/.test(value)"
-                        placeholder="统计时间(m)"
+                        placeholder="统计时间"
                       />
                     </n-form-item>
                     <n-form-item
@@ -206,6 +199,7 @@
   import { ArrowReply20Filled } from '@vicons/fluent';
   import { defineComponent, ref, onMounted } from 'vue';
   import ACard from '@/components/ACard.vue';
+  import ATimeInputVue from '@/components/ATimeInput.vue';
   import { useRouter } from 'vue-router';
   import silenceapi from '@/api/silence.js';
   import metricapi from '@/api/metric.js';
@@ -229,7 +223,7 @@
     },
   ];
   export default defineComponent({
-    components: { ACard },
+    components: { ACard, ATimeInputVue },
     setup() {
       let router = useRouter();
       let screenHeight = ref(window.innerHeight - 89);
@@ -301,8 +295,8 @@
         data.alertSilencesId = ruleData.value.alertSilencesId;
         data.description = ruleData.value.webhook;
         data.name = ruleData.value.name;
-        data.persistent = ruleData.value.persistent + 'm';
-        data.alertInterval = ruleData.value.alertInterval + 'm';
+        data.persistent = ruleData.value.persistent;
+        data.alertInterval = ruleData.value.alertInterval;
         data.rulesStatus = '0';
         data.alertObjectArr = {};
         for (let index = 0; index < ruleData.value.alertObjectArr?.length; index++) {
@@ -316,7 +310,7 @@
             alert_value: item.alert_value,
             metric_id: item.metric_id,
             operator: item.operator,
-            statistics: item.statistics + 'm',
+            statistics: item.statistics,
           });
         }
         ruleapi.create(data).then((res) => {
