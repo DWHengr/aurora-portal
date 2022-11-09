@@ -8,7 +8,7 @@
             返回告警规则页面
           </NButton>
           <div class="cut-off"></div>
-          <p class="text-16px font-medium"> 创建告警规则</p>
+          <p class="text-16px font-medium"> {{ title }}</p>
         </div>
       </a-card>
       <a-card :gradual="false" class="mt-[15px]">
@@ -109,10 +109,10 @@
                       ignore-path-change
                       :show-label="false"
                       class="w-38"
-                      :path="`rulesArr[${index}].metric_id`"
+                      :path="`rulesArr[${index}].metricId`"
                     >
                       <n-select
-                        v-model:value="ruleData.rulesArr[index].metric_id"
+                        v-model:value="ruleData.rulesArr[index].metricId"
                         placeholder="告警指标"
                         filterable
                         :options="metricsOptions"
@@ -150,11 +150,11 @@
                       class="w-26"
                       ignore-path-change
                       :show-label="false"
-                      :path="`rulesArr[${index}].alert_value`"
+                      :path="`rulesArr[${index}].alertValue`"
                       :rule="dynamicInputRule"
                     >
                       <n-input
-                        v-model:value="ruleData.rulesArr[index].alert_value"
+                        v-model:value="ruleData.rulesArr[index].alertValue"
                         placeholder="告警值"
                         :allow-input="(value) => !value || /^\d+$/.test(value)"
                         @keydown.enter.prevent
@@ -187,7 +187,7 @@
           </n-form-item>
           <div class="flex justify-center">
             <NButton class="w-80px" @click="onBaackRulePage"> 返回 </NButton>
-            <NButton class="ml-20px w-80px" @click="onCreateRule" type="primary"> 创建 </NButton>
+            <NButton class="ml-20px w-80px" @click="onCreateRule" type="primary"> 保存 </NButton>
           </div>
         </n-form>
       </a-card>
@@ -229,6 +229,7 @@
       let screenHeight = ref(window.innerHeight - 89);
       let silenceOptions = ref([]);
       let metricsOptions = ref([]);
+      let title = ref('创建告警规则');
       let ruleData = ref({
         name: null,
         severity: null,
@@ -243,12 +244,24 @@
       });
 
       onMounted(() => {
+        isRuleEdit(router.currentRoute.value.query.editId);
         window.onresize = () => {
           screenHeight.value = window.innerHeight - 89;
         };
         getAllSilences();
         getAllMetrics();
       });
+
+      const isRuleEdit = (id) => {
+        if (id) {
+          title.value = '修改告警规则';
+          ruleapi.details(id).then((res) => {
+            if (res.code == 0) {
+              ruleData.value = res.data;
+            }
+          });
+        }
+      };
 
       const getAllSilences = () => {
         silenceapi.all().then((res) => {
@@ -289,47 +302,32 @@
       };
 
       const onCreateRule = () => {
-        let data = {};
-        data.severity = ruleData.value.severity;
-        data.webhook = ruleData.value.webhook;
-        data.alertSilencesId = ruleData.value.alertSilencesId;
-        data.description = ruleData.value.webhook;
-        data.name = ruleData.value.name;
-        data.persistent = ruleData.value.persistent;
-        data.alertInterval = ruleData.value.alertInterval;
-        data.rulesStatus = '0';
-        data.alertObjectArr = {};
-        for (let index = 0; index < ruleData.value.alertObjectArr?.length; index++) {
-          let item = ruleData.value.alertObjectArr[index];
-          data.alertObjectArr[item.name] = item.value;
-        }
-        data.rulesArr = [];
-        for (let index = 0; index < ruleData.value.rulesArr?.length; index++) {
-          let item = ruleData.value.rulesArr[index];
-          data.rulesArr.push({
-            alert_value: item.alert_value,
-            metric_id: item.metric_id,
-            operator: item.operator,
-            statistics: item.statistics,
+        if (router.currentRoute.value.query.editId) {
+          ruleapi.update(ruleData.value).then((res) => {
+            if (res.code == 0) {
+              window.$message.success('修改成功');
+            }
+          });
+        } else {
+          ruleData.value.rulesStatus = '0';
+          ruleapi.create(ruleData.value).then((res) => {
+            if (res.code == 0) {
+              window.$message.success('添加成功');
+              ruleData.value = {
+                name: null,
+                severity: null,
+                webhook: null,
+                alertSilencesId: null,
+                description: null,
+                persistent: null,
+                alertInterval: null,
+                rulesStatus: null,
+                alertObjectArr: [],
+                rulesArr: [],
+              };
+            }
           });
         }
-        ruleapi.create(data).then((res) => {
-          if (res.code == 0) {
-            window.$message.success('添加成功');
-            ruleData.value = {
-              name: null,
-              severity: null,
-              webhook: null,
-              alertSilencesId: null,
-              description: null,
-              persistent: null,
-              alertInterval: null,
-              rulesStatus: null,
-              alertObjectArr: [],
-              rulesArr: [],
-            };
-          }
-        });
       };
 
       const onCreateAlertObject = () => {
@@ -341,10 +339,10 @@
 
       const onCreateAlertMetric = () => {
         return {
-          metric_id: null,
+          metricId: null,
           statistics: null,
           operator: null,
-          alert_value: '',
+          alertValue: '',
         };
       };
 
@@ -363,6 +361,7 @@
         severityTypeOptions,
         silenceOptions,
         metricsOptions,
+        title,
         onBaackRulePage,
         onCreateRule,
         onCreateAlertObject,

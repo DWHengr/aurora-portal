@@ -155,7 +155,9 @@
                   type: 'primary',
                   size: 'small',
                   style: { margin: '2px' },
-                  onClick: () => {},
+                  onClick: () => {
+                    onEditRule(row);
+                  },
                 },
                 () => [
                   h(NIcon, { component: Edit16Filled, size: 18, style: { marginRight: '2px' } }),
@@ -183,6 +185,10 @@
       onMounted(() => {
         page();
       });
+
+      const onEditRule = (row) => {
+        router.push({ name: 'rulecreate', query: { editId: row.id } });
+      };
 
       const page = (pagedata) => {
         loadingBar.finish();

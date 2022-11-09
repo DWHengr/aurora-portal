@@ -10,4 +10,10 @@ export default {
   create(param) {
     return Http.post('/api/v1/rule/create', param);
   },
+  update(param) {
+    return Http.post('/api/v1/rule/update', param);
+  },
+  details(param) {
+    return Http.post('/api/v1/rule/details/' + param);
+  },
 };
