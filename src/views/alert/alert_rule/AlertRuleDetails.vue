@@ -8,7 +8,7 @@
             返回告警规则页面
           </NButton>
           <div class="cut-off"></div>
-          <p class="text-16px font-medium"> {{ title }}</p>
+          <p class="text-16px font-medium">告警规则详细</p>
         </div>
       </a-card>
       <a-card :gradual="false" class="mt-[15px]">
@@ -24,10 +24,16 @@
         >
           <p class="divide-label">基本信息</p>
           <n-form-item label="名称:" path="name">
-            <n-input class="w-9" v-model:value="ruleData.name" placeholder="请输入规则名称" />
+            <n-input
+              disabled
+              class="w-9"
+              v-model:value="ruleData.name"
+              placeholder="请输入规则名称"
+            />
           </n-form-item>
           <n-form-item label="告警等级:" path="severity">
             <n-select
+              disabled
               v-model:value="ruleData.severity"
               placeholder="请选择告警等级"
               :options="severityTypeOptions"
@@ -35,6 +41,7 @@
           </n-form-item>
           <n-form-item label="告警静默:" path="alertSilencesId">
             <n-select
+              disabled
               v-model:value="ruleData.alertSilencesId"
               placeholder="请选择告警静默"
               :options="silenceOptions"
@@ -43,11 +50,14 @@
           <p class="divide-label">告警对象</p>
           <n-dynamic-input
             class="pl-[120px]"
+            disabled
+            :min="ruleData.alertObjectArr.length"
+            :max="ruleData.alertObjectArr.length"
             v-model:value="ruleData.alertObjectArr"
             item-style="margin-bottom: 0;"
             :on-create="onCreateAlertObject"
           >
-            <template #create-button-default> 增加告警对象键值对 </template>
+            <template #create-button-default> 暂无告警规则，请先到修改页面添加 </template>
             <template #default="{ index }">
               <div style="display: flex">
                 <n-form-item
@@ -57,6 +67,7 @@
                   :rule="dynamicInputRule"
                 >
                   <n-input
+                    disabled
                     v-model:value="ruleData.alertObjectArr[index].name"
                     placeholder="key"
                     @keydown.enter.prevent
@@ -70,6 +81,7 @@
                   :rule="dynamicInputRule"
                 >
                   <n-input
+                    disabled
                     v-model:value="ruleData.alertObjectArr[index].value"
                     placeholder="Value"
                     @keydown.enter.prevent
@@ -83,6 +95,7 @@
             <div>
               <n-form-item label="间隔时间(m):" path="alertInterval">
                 <ATimeInputVue
+                  disabled
                   class="w-9"
                   v-model:value="ruleData.alertInterval"
                   placeholder="请输入告警间隔时间"
@@ -92,17 +105,20 @@
             <div class="flex justify-end"
               >告警规则：满足以下指标判断条件，且告警规则持续时间
               <n-form-item class="w-36 inline-block" path="persistent">
-                <ATimeInputVue v-model:value="ruleData.persistent" /> </n-form-item
+                <ATimeInputVue disabled v-model:value="ruleData.persistent" /> </n-form-item
               >，则触发。</div
             >
             <div>
               <n-dynamic-input
+                disabled
                 class="pl-[120px]"
+                :min="ruleData.rulesArr.length"
+                :max="ruleData.rulesArr.length"
                 v-model:value="ruleData.rulesArr"
                 item-style="margin-bottom: 0;"
                 :on-create="onCreateAlertMetric"
               >
-                <template #create-button-default>新增告警指标 </template>
+                <template #create-button-default> 暂无告警指标，请先到修改页面添加 </template>
                 <template #default="{ index }">
                   <div style="display: flex">
                     <n-form-item
@@ -112,6 +128,7 @@
                       :path="`rulesArr[${index}].metricId`"
                     >
                       <n-select
+                        disabled
                         v-model:value="ruleData.rulesArr[index].metricId"
                         placeholder="告警指标"
                         filterable
@@ -129,6 +146,7 @@
                       :rule="dynamicInputRule"
                     >
                       <ATimeInputVue
+                        disabled
                         v-model:value="ruleData.rulesArr[index].statistics"
                         placeholder="统计时间"
                       />
@@ -141,6 +159,7 @@
                       :rule="dynamicInputRule"
                     >
                       <n-select
+                        disabled
                         v-model:value="ruleData.rulesArr[index].operator"
                         placeholder="操作符"
                         :options="ruleData.rulesArr[index].operOption"
@@ -154,6 +173,7 @@
                       :rule="dynamicInputRule"
                     >
                       <n-input
+                        disabled
                         v-model:value="ruleData.rulesArr[index].alertValue"
                         placeholder="告警值"
                         :allow-input="(value) => !value || /^\d+$/.test(value)"
@@ -169,10 +189,11 @@
           </div>
           <p class="divide-label">告警通知</p>
           <n-form-item label="告警通知组:" path="inputValue">
-            <n-select v-model:value="value" multiple :options="options" />
+            <n-select disabled v-model:value="value" multiple :options="options" />
           </n-form-item>
           <n-form-item label="回调接口:" path="inputValue">
             <n-input
+              disabled
               class="w-9"
               type="textarea"
               maxlength="120"
@@ -187,7 +208,6 @@
           </n-form-item>
           <div class="flex justify-center">
             <NButton class="w-80px" @click="onBaackRulePage"> 返回 </NButton>
-            <NButton class="ml-20px w-80px" @click="onCreateRule" type="primary"> 保存 </NButton>
           </div>
         </n-form>
       </a-card>
@@ -229,7 +249,6 @@
       let screenHeight = ref(window.innerHeight - 89);
       let silenceOptions = ref([]);
       let metricsOptions = ref([]);
-      let title = ref('创建告警规则');
       let ruleData = ref({
         name: null,
         severity: null,
@@ -244,7 +263,7 @@
       });
 
       onMounted(() => {
-        isRuleEdit(router.currentRoute.value.query.ruleId);
+        isDetails(router.currentRoute.value.query.ruleId);
         window.onresize = () => {
           screenHeight.value = window.innerHeight - 89;
         };
@@ -252,9 +271,8 @@
         getAllMetrics();
       });
 
-      const isRuleEdit = (id) => {
+      const isDetails = (id) => {
         if (id) {
-          title.value = '修改告警规则';
           ruleapi.details(id).then((res) => {
             if (res.code == 0) {
               ruleData.value = res.data;
@@ -301,72 +319,13 @@
         router.push({ name: 'rule' });
       };
 
-      const onCreateRule = () => {
-        if (router.currentRoute.value.query.editId) {
-          ruleapi.update(ruleData.value).then((res) => {
-            if (res.code == 0) {
-              window.$message.success('修改成功');
-            }
-          });
-        } else {
-          ruleData.value.rulesStatus = '0';
-          ruleapi.create(ruleData.value).then((res) => {
-            if (res.code == 0) {
-              window.$message.success('添加成功');
-              ruleData.value = {
-                name: null,
-                severity: null,
-                webhook: null,
-                alertSilencesId: null,
-                description: null,
-                persistent: null,
-                alertInterval: null,
-                rulesStatus: null,
-                alertObjectArr: [],
-                rulesArr: [],
-              };
-            }
-          });
-        }
-      };
-
-      const onCreateAlertObject = () => {
-        return {
-          name: '',
-          value: '',
-        };
-      };
-
-      const onCreateAlertMetric = () => {
-        return {
-          metricId: null,
-          statistics: null,
-          operator: null,
-          alertValue: '',
-        };
-      };
-
-      const onMetricSelectUpdate = (row, data) => {
-        data.unit = row.unit;
-        let operOption = [];
-        let operArr = row.operator.split(',');
-        for (let index = 0; index < operArr.length; index++) {
-          operOption.push({ label: operArr[index], value: operArr[index] });
-        }
-        data.operOption = operOption;
-      };
       return {
         ruleData,
         screenHeight,
         severityTypeOptions,
         silenceOptions,
         metricsOptions,
-        title,
         onBaackRulePage,
-        onCreateRule,
-        onCreateAlertObject,
-        onCreateAlertMetric,
-        onMetricSelectUpdate,
         ArrowReply20Filled,
       };
     },

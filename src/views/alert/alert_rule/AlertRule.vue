@@ -127,6 +127,17 @@
         {
           title: '名称',
           key: 'name',
+          render: (row) => {
+            return h(
+              'a',
+              {
+                onClick: () => {
+                  router.push({ name: 'ruledetails', query: { ruleId: row.id } });
+                },
+              },
+              { default: () => row.name }
+            );
+          },
         },
         {
           title: '告警等级',
@@ -187,7 +198,7 @@
       });
 
       const onEditRule = (row) => {
-        router.push({ name: 'rulecreate', query: { editId: row.id } });
+        router.push({ name: 'rulecreate', query: { ruleId: row.id } });
       };
 
       const page = (pagedata) => {
@@ -279,4 +290,10 @@
   });
 </script>
 
-<style lang="less"></style>
+<style lang="less">
+  a {
+    color: #6d28d9;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+</style>

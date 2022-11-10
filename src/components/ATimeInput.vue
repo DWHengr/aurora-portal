@@ -1,7 +1,12 @@
 <template>
-  <NInput v-model:value="inputValue" :allow-input="(value) => !value || /^\d+$/.test(value)">
+  <NInput
+    :disabled="disabled"
+    v-model:value="inputValue"
+    :allow-input="(value) => !value || /^\d+$/.test(value)"
+  >
     <template #suffix>
       <n-select
+        :disabled="disabled"
         class="time-uint-select"
         v-model:value="timeSelectValue"
         @update:value="onSelectUpdate"
@@ -17,6 +22,10 @@
   import { defineComponent, ref, computed } from 'vue';
   export default defineComponent({
     props: {
+      disabled: {
+        type: Boolean,
+        default: false,
+      },
       value: {
         type: String,
         default: '',

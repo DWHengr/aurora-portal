@@ -36,6 +36,16 @@ export default {
       component: () => import('@/views/alert/alert_rule/AlertRuleCreate.vue'),
     },
     {
+      path: 'rule/details',
+      name: 'ruledetails',
+      meta: {
+        title: '告警规则详情',
+        isNoShow: true,
+        path: '/rule/details',
+      },
+      component: () => import('@/views/alert/alert_rule/AlertRuleDetails.vue'),
+    },
+    {
       path: 'record',
       name: 'record',
       meta: {
