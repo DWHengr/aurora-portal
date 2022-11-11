@@ -13,4 +13,7 @@ export default {
   deletes(param) {
     return Http.post('/api/v1/usergroup/deletes', param);
   },
+  all() {
+    return Http.post('/api/v1/usergroup/all');
+  },
 };
