@@ -168,10 +168,14 @@
             </div>
           </div>
           <p class="divide-label">告警通知</p>
-          <n-form-item label="告警通知组:" path="inputValue">
-            <n-select v-model:value="value" multiple :options="options" />
+          <n-form-item label="告警通知组:" path="userGroupIdsArr">
+            <n-select
+              v-model:value="ruleData.userGroupIdsArr"
+              multiple
+              :options="userGroupIdsOption"
+            />
           </n-form-item>
-          <n-form-item label="回调接口:" path="inputValue">
+          <n-form-item label="回调接口:" path="webhook">
             <n-input
               class="w-9"
               type="textarea"
@@ -203,6 +207,7 @@
   import { useRouter } from 'vue-router';
   import silenceapi from '@/api/silence.js';
   import metricapi from '@/api/metric.js';
+  import usergroupapi from '@/api/userGroup.js';
   import ruleapi from '@/api/rule.js';
   const severityTypeOptions = [
     {
@@ -229,6 +234,7 @@
       let screenHeight = ref(window.innerHeight - 89);
       let silenceOptions = ref([]);
       let metricsOptions = ref([]);
+      let userGroupIdsOption = ref([]);
       let title = ref('创建告警规则');
       let ruleData = ref({
         name: null,
@@ -238,7 +244,7 @@
         description: null,
         persistent: null,
         alertInterval: null,
-        rulesStatus: null,
+        rulesStatus: 1,
         alertObjectArr: [],
         rulesArr: [],
       });
@@ -250,6 +256,7 @@
         };
         getAllSilences();
         getAllMetrics();
+        getAllUserGroupIds();
       });
 
       const isRuleEdit = (id) => {
@@ -279,6 +286,22 @@
         });
       };
 
+      const getAllUserGroupIds = () => {
+        usergroupapi.all().then((res) => {
+          if (res.code == 0) {
+            let options = [];
+            for (let index = 0; index < res.data?.length; index++) {
+              let item = res.data[index];
+              options.push({
+                label: item.name,
+                value: item.id,
+              });
+            }
+            userGroupIdsOption.value = options;
+          }
+        });
+      };
+
       const getAllMetrics = () => {
         metricapi.all().then((res) => {
           if (res.code == 0) {
@@ -302,14 +325,14 @@
       };
 
       const onCreateRule = () => {
-        if (router.currentRoute.value.query.editId) {
+        if (router.currentRoute.value.query.ruleId) {
           ruleapi.update(ruleData.value).then((res) => {
             if (res.code == 0) {
               window.$message.success('修改成功');
             }
           });
         } else {
-          ruleData.value.rulesStatus = '0';
+          ruleData.value.rulesStatus = 1;
           ruleapi.create(ruleData.value).then((res) => {
             if (res.code == 0) {
               window.$message.success('添加成功');
@@ -323,6 +346,7 @@
                 alertInterval: null,
                 rulesStatus: null,
                 alertObjectArr: [],
+                userGroupIdsArr: [],
                 rulesArr: [],
               };
             }
@@ -362,6 +386,7 @@
         silenceOptions,
         metricsOptions,
         title,
+        userGroupIdsOption,
         onBaackRulePage,
         onCreateRule,
         onCreateAlertObject,
