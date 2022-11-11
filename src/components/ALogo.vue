@@ -1,7 +1,7 @@
 <template>
   <div class="logo">
     <img src="@/assets/logo.png" alt="" :class="{ 'mr-2': !collapsed }" />
-    <h2 v-show="!collapsed" class="title">Aurora</h2>
+    <div v-show="!collapsed" class="logo-title">Aurora</div>
   </div>
 </template>
 
@@ -11,7 +11,7 @@
     props: {
       collapsed: {
         type: Boolean,
-        default: false,
+        default: true,
       },
     },
   };
@@ -32,7 +32,7 @@
       height: 32px;
     }
 
-    .title {
+    .logo-title {
       margin-bottom: 0;
     }
   }
