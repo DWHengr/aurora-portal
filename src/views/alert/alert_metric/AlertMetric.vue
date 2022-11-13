@@ -92,23 +92,24 @@
           }"
         >
           <n-form-item label="指标名称:" path="name">
-            <n-input class="w-9" v-model:value="metricData.name" placeholder="请输入静默名称" />
+            <n-input class="w-9" v-model:value="metricData.name" placeholder="请输入指标名称" />
           </n-form-item>
           <n-form-item label="指标类型:" path="type">
-            <n-input class="w-9" v-model:value="metricData.type" placeholder="请输入静默名称" />
+            <n-input class="w-9" v-model:value="metricData.type" placeholder="请输入指标类型" />
           </n-form-item>
           <n-form-item label="表达式:" path="expression">
-            <n-input
-              class="w-9"
-              v-model:value="metricData.expression"
-              placeholder="请输入静默名称"
-            />
+            <n-input class="w-9" v-model:value="metricData.expression" placeholder="请输入表达式" />
           </n-form-item>
           <n-form-item label="单位:" path="unit">
-            <n-input class="w-9" v-model:value="metricData.unit" placeholder="请输入静默名称" />
+            <n-input class="w-9" v-model:value="metricData.unit" placeholder="请输入单位" />
           </n-form-item>
-          <n-form-item label="操作符:" path="operator">
-            <n-input class="w-9" v-model:value="metricData.operator" placeholder="请输入静默名称" />
+          <n-form-item label="操作符:" path="operatorArr">
+            <n-select
+              v-model:value="metricData.operatorArr"
+              placeholder="请选择操作符"
+              :options="operatorOption"
+              multiple
+            />
           </n-form-item>
           <n-form-item label="备注:" path="description">
             <n-input
@@ -200,12 +201,40 @@
       trigger: ['input', 'blur'],
       message: '请输入单位',
     },
-    operator: {
+    operatorArr: {
+      type: 'array',
       required: true,
       message: '请输入操作符',
-      trigger: ['input', 'blur'],
+      trigger: ['blur', 'change'],
     },
   };
+
+  const operatorOption = [
+    {
+      label: '==',
+      value: '==',
+    },
+    {
+      label: '>',
+      value: '>',
+    },
+    {
+      label: '<',
+      value: '<',
+    },
+    {
+      label: '!=',
+      value: '!=',
+    },
+    {
+      label: '>=',
+      value: '>=',
+    },
+    {
+      label: '<=',
+      value: '<=',
+    },
+  ];
 
   export default defineComponent({
     name: 'AlertMetric',
@@ -420,6 +449,7 @@
         metricData,
         rules,
         formRef,
+        operatorOption,
         onMetricCreate,
         onMetricDeleteTip,
         onMetricDelete,
