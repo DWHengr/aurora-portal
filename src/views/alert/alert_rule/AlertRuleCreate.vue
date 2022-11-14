@@ -264,6 +264,15 @@
           title.value = '修改告警规则';
           ruleapi.details(id).then((res) => {
             if (res.code == 0) {
+              for (let index = 0; index < res.data.rulesArr?.length; index++) {
+                let item = res.data.rulesArr[index];
+                let operOption = [];
+                let operArr = item.operator.split(',');
+                for (let index = 0; index < operArr.length; index++) {
+                  operOption.push({ label: operArr[index], value: operArr[index] });
+                }
+                item.operOption = operOption;
+              }
               ruleData.value = res.data;
             }
           });
