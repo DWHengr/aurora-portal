@@ -209,6 +209,7 @@
   import metricapi from '@/api/metric.js';
   import usergroupapi from '@/api/userGroup.js';
   import ruleapi from '@/api/rule.js';
+  import { useLoadingBar } from 'naive-ui';
   const severityTypeOptions = [
     {
       label: '提示',
@@ -236,6 +237,7 @@
       let metricsOptions = ref([]);
       let userGroupIdsOption = ref([]);
       let title = ref('创建告警规则');
+      const loadingBar = useLoadingBar();
       let ruleData = ref({
         name: null,
         severity: null,
@@ -334,11 +336,14 @@
       };
 
       const onCreateRule = () => {
+        loadingBar.finish();
+        loadingBar.start();
         if (router.currentRoute.value.query.ruleId) {
           ruleapi.update(ruleData.value).then((res) => {
             if (res.code == 0) {
               window.$message.success('修改成功');
             }
+            loadingBar.finish();
           });
         } else {
           ruleData.value.rulesStatus = 1;
@@ -359,6 +364,7 @@
                 rulesArr: [],
               };
             }
+            loadingBar.finish();
           });
         }
       };
