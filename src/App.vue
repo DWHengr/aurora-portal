@@ -54,6 +54,9 @@
       colorLoading: '#B67AFF',
       height: '5px',
     },
+    Form: {
+      feedbackTextColor: '#8b5cf6',
+    },
   };
 </script>
 

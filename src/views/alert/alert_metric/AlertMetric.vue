@@ -29,7 +29,11 @@
             class="w-20 left-1"
             @click="
               () => {
-                (showModal = true), (is0EditAnd1Create = 1), (metricData = {});
+                (showModal = true),
+                  (is0EditAnd1Create = 1),
+                  (metricData = {}),
+                  (verifyMetricStatus = ''),
+                  (verifyMetricValue = '');
               }
             "
           >
@@ -97,8 +101,15 @@
           <n-form-item label="指标类型:" path="type">
             <n-input class="w-9" v-model:value="metricData.type" placeholder="请输入指标类型" />
           </n-form-item>
-          <n-form-item label="表达式:" path="expression">
-            <n-input class="w-9" v-model:value="metricData.expression" placeholder="请输入表达式" />
+          <n-form-item label="表达式:" :validation-status="verifyMetricStatus" path="expression">
+            <n-input class="w-9" v-model:value="metricData.expression" placeholder="请输入表达式">
+              <template #suffix>
+                <n-button size="tiny" type="primary" @click="onVerifyMetric"> 验证 </n-button>
+              </template>
+            </n-input>
+            <template #feedback>
+              {{ verifyMetricValue }}
+            </template>
           </n-form-item>
           <n-form-item label="单位:" path="unit">
             <n-input class="w-9" v-model:value="metricData.unit" placeholder="请输入单位" />
@@ -126,6 +137,9 @@
             />
           </n-form-item>
         </n-form>
+        <n-modal v-model:show="showMeticsDetailsModal" class="w-[800px]" preset="card">
+          >l
+        </n-modal>
       </div>
       <template #action>
         <div class="flex justify-end w-full">
@@ -180,35 +194,6 @@
     ];
   };
 
-  const rules = {
-    name: {
-      required: true,
-      message: '请输入指标名称',
-      trigger: ['input', 'blur'],
-    },
-    type: {
-      required: true,
-      trigger: ['input', 'blur'],
-      message: '请输入指标类型',
-    },
-    expression: {
-      required: true,
-      message: '请输入表达式',
-      trigger: ['input', 'blur'],
-    },
-    unit: {
-      required: true,
-      trigger: ['input', 'blur'],
-      message: '请输入单位',
-    },
-    operatorArr: {
-      type: 'array',
-      required: true,
-      message: '请输入操作符',
-      trigger: ['blur', 'change'],
-    },
-  };
-
   const operatorOption = [
     {
       label: '==',
@@ -248,6 +233,9 @@
       const checkedRows = ref([]);
       const data = ref([]);
       const showModal = ref(false);
+      const showMeticsDetailsModal = ref(false);
+      const verifyMetricValue = ref('');
+      const verifyMetricStatus = ref('');
       const metricData = ref({
         name: '',
         type: '',
@@ -311,6 +299,8 @@
                   onClick: () => {
                     showModal.value = true;
                     is0EditAnd1Create.value = 0;
+                    verifyMetricStatus.value = '';
+                    verifyMetricValue.value = '';
                     metricData.value = { ...row };
                   },
                 },
@@ -337,6 +327,35 @@
         },
       ];
 
+      const rules = {
+        name: {
+          required: true,
+          message: '请输入指标名称',
+          trigger: ['input', 'blur'],
+        },
+        type: {
+          required: true,
+          trigger: ['input', 'blur'],
+          message: '请输入指标类型',
+        },
+        expression: {
+          required: true,
+          validator: () => onVerifyMetric(),
+          trigger: ['blur'],
+        },
+        unit: {
+          required: true,
+          trigger: ['input', 'blur'],
+          message: '请输入单位',
+        },
+        operatorArr: {
+          type: 'array',
+          required: true,
+          message: '请输入操作符',
+          trigger: ['blur', 'change'],
+        },
+      };
+
       onMounted(() => {
         page();
       });
@@ -362,7 +381,7 @@
 
       const onMetricCreate = () => {
         formRef.value?.validate((errors) => {
-          if (!errors) {
+          if (!errors && verifyMetricStatus.value == 'success') {
             metricapi.create(metricData.value).then((res) => {
               if (res.code == 0) {
                 page();
@@ -377,13 +396,17 @@
       };
 
       const onMetricEdit = () => {
-        metricapi.update(metricData.value).then((res) => {
-          if (res.code == 0) {
-            page();
-            formRef.value.restoreValidation();
-            metricData.value = {};
-            showModal.value = false;
-            window.$message.success('修改成功');
+        formRef.value?.validate((errors) => {
+          if (!errors && verifyMetricStatus.value == 'success') {
+            metricapi.update(metricData.value).then((res) => {
+              if (res.code == 0) {
+                page();
+                formRef.value.restoreValidation();
+                metricData.value = {};
+                showModal.value = false;
+                window.$message.success('修改成功');
+              }
+            });
           }
         });
       };
@@ -430,9 +453,32 @@
         }
       };
 
-      const onSeek = () => {
-        // eslint-disable-next-line no-console
-        console.log(multipleSelectValue.value);
+      const onVerifyMetric = () => {
+        if (!metricData.value.expression) {
+          verifyMetricStatus.value = 'error';
+          verifyMetricValue.value = '请输入表达式';
+          return;
+        }
+        let exp = metricData.value.expression;
+        exp = exp?.replace('${}', '');
+        exp = exp?.replace('$[]', '[1m]') + '==1';
+        metricapi.verify(exp).then((res) => {
+          if (res.code == 0) {
+            let item = res.data;
+            if (item.status == 'success') {
+              verifyMetricStatus.value = 'success';
+              if (!item.data.result || item.data.result.length <= 0) {
+                verifyMetricValue.value = '测试表达式: ' + exp + ' 返回值为空';
+              } else {
+                let value = item.data.result[0].value[1];
+                verifyMetricValue.value = '测试表达式: ' + exp + ' 返回值: ' + value;
+              }
+            } else if (item.status == 'error') {
+              verifyMetricStatus.value = 'error';
+              verifyMetricValue.value = item.error;
+            }
+          }
+        });
       };
 
       return {
@@ -450,12 +496,15 @@
         rules,
         formRef,
         operatorOption,
+        showMeticsDetailsModal,
+        verifyMetricValue,
+        verifyMetricStatus,
         onMetricCreate,
         onMetricDeleteTip,
         onMetricDelete,
         page,
-        onSeek,
         onMetricEdit,
+        onVerifyMetric,
         BarcodeScanner24Filled,
         Add12Filled,
         Delete24Regular,

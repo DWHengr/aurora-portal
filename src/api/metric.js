@@ -16,4 +16,7 @@ export default {
   all() {
     return Http.post('/api/v1/metric/all');
   },
+  verify(param) {
+    return Http.post('/api/v1/metric/verify/' + param);
+  },
 };
