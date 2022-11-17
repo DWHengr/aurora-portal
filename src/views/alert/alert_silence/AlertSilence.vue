@@ -428,13 +428,17 @@
       };
 
       const onSilenceEdit = () => {
-        silenceapi.update(silenceData.value).then((res) => {
-          if (res.code == 0) {
-            page();
-            formRef.value.restoreValidation();
-            silenceData.value = {};
-            showModal.value = false;
-            window.$message.success('修改成功');
+        formRef.value?.validate((errors) => {
+          if (!errors) {
+            silenceapi.update(silenceData.value).then((res) => {
+              if (res.code == 0) {
+                page();
+                formRef.value.restoreValidation();
+                silenceData.value = {};
+                showModal.value = false;
+                window.$message.success('修改成功');
+              }
+            });
           }
         });
       };

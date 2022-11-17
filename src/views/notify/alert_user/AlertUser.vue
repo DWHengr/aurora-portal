@@ -571,16 +571,20 @@
       };
 
       const onUserEdit = () => {
-        userapi.update(userData.value).then((res) => {
-          if (res.code == 0) {
-            page();
-            formRef.value.restoreValidation();
-            userData.value = {};
-            showUserModal.value = false;
-            window.$message.success('修改成功');
+        formRef.value?.validate((errors) => {
+          if (!errors) {
+            userapi.update(userData.value).then((res) => {
+              if (res.code == 0) {
+                page();
+                formRef.value.restoreValidation();
+                userData.value = {};
+                showUserModal.value = false;
+                window.$message.success('修改成功');
+              }
+            });
+            allUserOption.value = [];
           }
         });
-        allUserOption.value = [];
       };
 
       const onUserDeleteTip = (row) => {
@@ -655,13 +659,17 @@
       };
 
       const onUserGroupEdit = () => {
-        usergroupapi.update(userGroupData.value).then((res) => {
-          if (res.code == 0) {
-            pageUserGroup();
-            formGroupRef.value.restoreValidation();
-            userGroupData.value = {};
-            showUserGroupModal.value = false;
-            window.$message.success('修改成功');
+        formGroupRef.value?.validate((errors) => {
+          if (!errors) {
+            usergroupapi.update(userGroupData.value).then((res) => {
+              if (res.code == 0) {
+                pageUserGroup();
+                formGroupRef.value.restoreValidation();
+                userGroupData.value = {};
+                showUserGroupModal.value = false;
+                window.$message.success('修改成功');
+              }
+            });
           }
         });
       };
