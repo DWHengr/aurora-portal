@@ -180,6 +180,7 @@
   import { useRouter } from 'vue-router';
   import metricapi from '@/api/metric.js';
   import { useDialog, useLoadingBar } from 'naive-ui';
+  import { debounce } from 'lodash';
 
   const createSeekOptions = () => {
     return [
@@ -379,7 +380,7 @@
           });
       };
 
-      const onMetricCreate = () => {
+      const onMetricCreate = debounce(() => {
         formRef.value?.validate((errors) => {
           if (!errors && verifyMetricStatus.value == 'success') {
             metricapi.create(metricData.value).then((res) => {
@@ -393,9 +394,9 @@
             });
           }
         });
-      };
+      }, 600);
 
-      const onMetricEdit = () => {
+      const onMetricEdit = debounce(() => {
         formRef.value?.validate((errors) => {
           if (!errors && verifyMetricStatus.value == 'success') {
             metricapi.update(metricData.value).then((res) => {
@@ -409,7 +410,7 @@
             });
           }
         });
-      };
+      }, 600);
 
       const onMetricDeleteTip = (row) => {
         let ids = [];

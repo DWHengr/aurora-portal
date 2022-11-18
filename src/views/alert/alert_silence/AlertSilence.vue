@@ -190,6 +190,7 @@
   import { useRouter } from 'vue-router';
   import silenceapi from '@/api/silence.js';
   import { useDialog, useLoadingBar } from 'naive-ui';
+  import { debounce } from 'lodash';
 
   const createSeekOptions = () => {
     return [
@@ -411,7 +412,7 @@
           });
       };
 
-      const onSilenceCreate = () => {
+      const onSilenceCreate = debounce(() => {
         formRef.value?.validate((errors) => {
           if (!errors) {
             silenceapi.create(silenceData.value).then((res) => {
@@ -425,9 +426,9 @@
             });
           }
         });
-      };
+      }, 600);
 
-      const onSilenceEdit = () => {
+      const onSilenceEdit = debounce(() => {
         formRef.value?.validate((errors) => {
           if (!errors) {
             silenceapi.update(silenceData.value).then((res) => {
@@ -441,7 +442,7 @@
             });
           }
         });
-      };
+      }, 600);
 
       const onSilenceDeleteTip = (row) => {
         let ids = [];

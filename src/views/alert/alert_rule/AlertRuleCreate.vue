@@ -210,6 +210,7 @@
   import usergroupapi from '@/api/userGroup.js';
   import ruleapi from '@/api/rule.js';
   import { useLoadingBar } from 'naive-ui';
+  import { debounce } from 'lodash';
   const severityTypeOptions = [
     {
       label: '提示',
@@ -335,7 +336,7 @@
         router.push({ name: 'rule' });
       };
 
-      const onCreateRule = () => {
+      const onCreateRule = debounce(() => {
         loadingBar.finish();
         loadingBar.start();
         if (router.currentRoute.value.query.ruleId) {
@@ -367,7 +368,7 @@
             loadingBar.finish();
           });
         }
-      };
+      }, 600);
 
       const onCreateAlertObject = () => {
         return {

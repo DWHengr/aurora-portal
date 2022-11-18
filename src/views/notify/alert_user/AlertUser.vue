@@ -339,6 +339,7 @@
   import userapi from '@/api/user.js';
   import usergroupapi from '@/api/userGroup.js';
   import { useDialog, useLoadingBar } from 'naive-ui';
+  import { debounce } from 'lodash';
 
   const seekOption = [
     {
@@ -537,7 +538,7 @@
           });
       };
 
-      const onUserCreate = () => {
+      const onUserCreate = debounce(() => {
         formRef.value?.validate((errors) => {
           if (!errors) {
             userapi.create(userData.value).then((res) => {
@@ -552,9 +553,9 @@
           }
         });
         allUserOption.value = [];
-      };
+      }, 600);
 
-      const onUserGroupCreate = () => {
+      const onUserGroupCreate = debounce(() => {
         formGroupRef.value?.validate((errors) => {
           if (!errors) {
             usergroupapi.create(userGroupData.value).then((res) => {
@@ -568,9 +569,9 @@
             });
           }
         });
-      };
+      }, 600);
 
-      const onUserEdit = () => {
+      const onUserEdit = debounce(() => {
         formRef.value?.validate((errors) => {
           if (!errors) {
             userapi.update(userData.value).then((res) => {
@@ -585,7 +586,7 @@
             allUserOption.value = [];
           }
         });
-      };
+      }, 600);
 
       const onUserDeleteTip = (row) => {
         let ids = [];
@@ -658,7 +659,7 @@
         }
       };
 
-      const onUserGroupEdit = () => {
+      const onUserGroupEdit = debounce(() => {
         formGroupRef.value?.validate((errors) => {
           if (!errors) {
             usergroupapi.update(userGroupData.value).then((res) => {
@@ -672,7 +673,7 @@
             });
           }
         });
-      };
+      }, 600);
 
       const onUserGroupDeleteTip = (item) => {
         dialog.warning({
