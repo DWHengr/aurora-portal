@@ -52,7 +52,7 @@
 
 <script>
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
-  import { NButton, NIcon, NTag, NEllipsis } from 'naive-ui';
+  import { NButton, NIcon, NTag } from 'naive-ui';
   import { AlertOn20Filled, Add12Filled, Delete24Regular, Edit16Filled } from '@vicons/fluent';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
@@ -146,6 +146,24 @@
         {
           title: '告警状态',
           key: 'rulesStatus',
+          render: (row) => {
+            return h(
+              NTag,
+              {
+                type: (() => {
+                  if (row.rulesStatus == 1) return 'info';
+                  else return 'error';
+                })(),
+                bordered: false,
+              },
+              {
+                default: () => {
+                  if (row.rulesStatus == 1) return '启用';
+                  else return '禁用';
+                },
+              }
+            );
+          },
         },
         {
           title: '告警等级',
