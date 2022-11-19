@@ -46,6 +46,7 @@
             v-model:value="ruleData.alertObjectArr"
             item-style="margin-bottom: 0;"
             :on-create="onCreateAlertObject"
+            :min="1"
           >
             <template #create-button-default> 增加告警对象键值对 </template>
             <template #default="{ index }">
@@ -101,6 +102,7 @@
                 v-model:value="ruleData.rulesArr"
                 item-style="margin-bottom: 0;"
                 :on-create="onCreateAlertMetric"
+                :min="1"
               >
                 <template #create-button-default>新增告警指标 </template>
                 <template #default="{ index }">
@@ -110,6 +112,7 @@
                       :show-label="false"
                       class="w-38"
                       :path="`rulesArr[${index}].metricId`"
+                      :rule="dynamicInputRule"
                     >
                       <n-select
                         v-model:value="ruleData.rulesArr[index].metricId"
@@ -229,6 +232,48 @@
       value: 'urgency',
     },
   ];
+
+  const rules = {
+    name: {
+      required: true,
+      message: '请输入名称',
+      trigger: ['input', 'blur'],
+    },
+    severity: {
+      required: true,
+      message: '请选择告警等级',
+      trigger: ['change', 'blur'],
+    },
+    alertSilencesId: {
+      required: true,
+      message: '请选择告警静默',
+      trigger: ['change', 'blur'],
+    },
+    alertInterval: {
+      required: true,
+      message: '请输入间隔时间',
+      trigger: ['input', 'blur'],
+    },
+    persistent: {
+      required: true,
+      message: '请输入持续时间时间',
+      trigger: ['input', 'blur'],
+    },
+    userGroupIdsArr: {
+      type: 'array',
+      required: true,
+      message: '请选择通知组',
+      trigger: ['change', 'blur'],
+    },
+  };
+  const dynamicInputRule = {
+    trigger: ['blur', 'input'],
+    validator(rule, value) {
+      if (!value || value.length <= 0) return new Error('值不能为空');
+      return true;
+    },
+  };
+
   export default defineComponent({
     components: { ACard, ATimeInputVue },
     setup() {
@@ -238,6 +283,7 @@
       let metricsOptions = ref([]);
       let userGroupIdsOption = ref([]);
       let title = ref('创建告警规则');
+      let formRef = ref(null);
       const loadingBar = useLoadingBar();
       let ruleData = ref({
         name: null,
@@ -248,8 +294,20 @@
         persistent: null,
         alertInterval: null,
         rulesStatus: 1,
-        alertObjectArr: [],
-        rulesArr: [],
+        alertObjectArr: [
+          {
+            name: '',
+            value: '',
+          },
+        ],
+        rulesArr: [
+          {
+            metricId: null,
+            statistics: null,
+            operator: null,
+            alertValue: '',
+          },
+        ],
       });
 
       onMounted(() => {
@@ -337,37 +395,53 @@
       };
 
       const onCreateRule = debounce(() => {
-        loadingBar.finish();
-        loadingBar.start();
-        if (router.currentRoute.value.query.ruleId) {
-          ruleapi.update(ruleData.value).then((res) => {
-            if (res.code == 0) {
-              window.$message.success('修改成功');
-            }
+        formRef.value?.validate((errors) => {
+          if (!errors) {
             loadingBar.finish();
-          });
-        } else {
-          ruleData.value.rulesStatus = 1;
-          ruleapi.create(ruleData.value).then((res) => {
-            if (res.code == 0) {
-              window.$message.success('添加成功');
-              ruleData.value = {
-                name: null,
-                severity: null,
-                webhook: null,
-                alertSilencesId: null,
-                description: null,
-                persistent: null,
-                alertInterval: null,
-                rulesStatus: null,
-                alertObjectArr: [],
-                userGroupIdsArr: [],
-                rulesArr: [],
-              };
+            loadingBar.start();
+            if (router.currentRoute.value.query.ruleId) {
+              ruleapi.update(ruleData.value).then((res) => {
+                if (res.code == 0) {
+                  window.$message.success('修改成功');
+                }
+                loadingBar.finish();
+              });
+            } else {
+              ruleData.value.rulesStatus = 1;
+              ruleapi.create(ruleData.value).then((res) => {
+                if (res.code == 0) {
+                  window.$message.success('添加成功');
+                  ruleData.value = {
+                    name: null,
+                    severity: null,
+                    webhook: null,
+                    alertSilencesId: null,
+                    description: null,
+                    persistent: null,
+                    alertInterval: null,
+                    rulesStatus: null,
+                    userGroupIdsArr: [],
+                    alertObjectArr: [
+                      {
+                        name: '',
+                        value: '',
+                      },
+                    ],
+                    rulesArr: [
+                      {
+                        metricId: null,
+                        statistics: null,
+                        operator: null,
+                        alertValue: '',
+                      },
+                    ],
+                  };
+                }
+                loadingBar.finish();
+              });
             }
-            loadingBar.finish();
-          });
-        }
+          }
+        });
       }, 600);
 
       const onCreateAlertObject = () => {
@@ -402,9 +476,12 @@
         silenceOptions,
         metricsOptions,
         title,
+        rules,
         userGroupIdsOption,
+        formRef,
         onBaackRulePage,
         onCreateRule,
+        dynamicInputRule,
         onCreateAlertObject,
         onCreateAlertMetric,
         onMetricSelectUpdate,
