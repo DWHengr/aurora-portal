@@ -54,6 +54,7 @@
   import { h, defineComponent, ref, onMounted, reactive } from 'vue';
   import { NButton, NIcon, NTag } from 'naive-ui';
   import { AlertOn20Filled, Add12Filled, Delete24Regular, Edit16Filled } from '@vicons/fluent';
+  import { MdSwitch } from '@vicons/ionicons4';
   import AFilterSeekInput from '@/components/AFilterSeekInput.vue';
   import ACard from '@/components/ACard.vue';
   import { useRouter } from 'vue-router';
@@ -166,10 +167,6 @@
           },
         },
         {
-          title: '告警等级',
-          key: 'severity',
-        },
-        {
           title: '回调接口',
           key: 'webhook',
         },
@@ -206,6 +203,20 @@
                   '删除',
                 ]
               ),
+              h(
+                NButton,
+                {
+                  secondary: true,
+                  type: row.rulesStatus == 1 ? 'error' : 'primary',
+                  size: 'small',
+                  style: { margin: '2px' },
+                  onClick: () => onUpdateStatus(row),
+                },
+                () => [
+                  h(NIcon, { component: MdSwitch, size: 18, style: { marginRight: '2px' } }),
+                  row.rulesStatus == 1 ? '禁用' : '启用',
+                ]
+              ),
             ];
           },
         },
@@ -235,6 +246,20 @@
               pagination.itemCount = res.data.total;
               pagination.pageCount = Math.ceil(res.data.total / pagination.pageSize);
             }
+          });
+      };
+
+      const onUpdateStatus = (row) => {
+        loadingBar.finish();
+        loadingBar.start();
+        ruleapi
+          .updateStatus({ id: row.id, rulesStatus: row.rulesStatus == 1 ? 0 : 1 })
+          .then((res) => {
+            if (res.code == 0) {
+              page();
+              window.$message.success('修改成功');
+            }
+            loadingBar.finish();
           });
       };
 

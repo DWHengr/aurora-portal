@@ -13,6 +13,9 @@ export default {
   update(param) {
     return Http.post('/api/v1/rule/update', param);
   },
+  updateStatus(param) {
+    return Http.post('/api/v1/rule/update/status', param);
+  },
   details(param) {
     return Http.post('/api/v1/rule/details/' + param);
   },
