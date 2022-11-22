@@ -265,6 +265,14 @@
       message: '请选择通知组',
       trigger: ['change', 'blur'],
     },
+    webhook: {
+      trigger: ['input'],
+      message: 'webhook格式错误，请包含http或https',
+      validator: (rule, value) => {
+        let exp = new RegExp('(http|https)://');
+        if (value) return exp.test(value);
+      },
+    },
   };
   const dynamicInputRule = {
     trigger: ['blur', 'input'],
